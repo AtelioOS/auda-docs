@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUDA OS — Propuesta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--graphite:#16191D;--graphite-2:#1E2228;--graphite-3:#262B32;--concrete:#F4F1EA;--concrete-2:#EAE6DC;--card:#fff;--steel:#8A93A0;--steel-2:#5B646F;--steel-3:#3A424B;--ochre:#E6971F;--ochre-soft:#F2B54B;--ochre-deep:#C97F12;--blueprint:#2E6FA7;--blueprint-soft:#6FA6D4;--ok:#3E9E6E;--hair:rgba(255,255,255,.08);--hair-d:rgba(22,25,29,.09);--shadow:0 20px 50px -24px rgba(22,25,29,.45);--r:16px}
+  *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--graphite);background:var(--concrete);line-height:1.55;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:600;line-height:1.12;letter-spacing:-.01em}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+  section{padding:76px 0}
+  a{color:inherit;text-decoration:none}
+  /* pkg bar */
+  .pkg-bar{position:sticky;top:0;z-index:50;background:rgba(22,25,29,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+  .pkg-bar .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brandmark{display:flex;align-items:center;gap:11px}
+  .brandmark .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--ochre),var(--ochre-deep));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;color:#16191D;font-size:16px;box-shadow:0 6px 16px -6px rgba(230,151,31,.6)}
+  .brandmark b{color:#fff;font-family:'Space Grotesk';font-weight:600;font-size:15px;letter-spacing:.02em}
+  .brandmark .x{color:var(--steel);font-size:12px;margin:0 2px}.brandmark .atelio{color:var(--steel);font-size:13px}
+  .pkg-nav{display:flex;gap:22px;align-items:center}
+  .pkg-nav a{color:var(--steel);font-size:13.5px;font-weight:500;transition:color .15s}
+  .pkg-nav a:hover{color:var(--ochre-soft)}.pkg-nav a.on{color:#fff}
+  .pkg-nav a.cta{background:var(--ochre);color:#16191D;padding:8px 14px;border-radius:9px;font-weight:600}
+  .pkg-nav a.cta:hover{color:#16191D}
+  @media(max-width:900px){.pkg-nav{gap:14px}.pkg-nav a:not(.cta){display:none}}
+  /* hero */
+  .hero{background:radial-gradient(900px 420px at 82% -8%,rgba(46,111,167,.17),transparent 60%),radial-gradient(680px 380px at 3% 108%,rgba(230,151,31,.12),transparent 60%),var(--graphite);color:#fff;position:relative;overflow:hidden;padding:88px 0 80px}
+  .hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);background-size:48px 48px;-webkit-mask-image:radial-gradient(circle at 72% 34%,#000,transparent 74%);mask-image:radial-gradient(circle at 72% 34%,#000,transparent 74%);opacity:.5}
+  .hero .wrap{position:relative}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ochre-soft);border:1px solid rgba(242,181,75,.35);padding:7px 14px;border-radius:99px;margin-bottom:26px;background:rgba(230,151,31,.06)}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--ochre);box-shadow:0 0 10px var(--ochre)}
+  .hero h1{font-size:clamp(36px,5.6vw,60px);color:#fff;max-width:17ch}
+  .hero h1 .a{color:var(--ochre-soft)}
+  .hero .lede{margin-top:22px;max-width:58ch;font-size:19px;color:#C9D0D8}
+  .hero .lede b{color:#fff;font-weight:600}
+  .meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:38px}
+  .chip{background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:12px;padding:13px 17px;min-width:140px}
+  .chip .k{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel)}
+  .chip .v{font-family:'Space Grotesk';font-weight:600;color:#fff;font-size:14.5px;margin-top:3px}
+  /* section heads */
+  .kicker{font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--blueprint);font-weight:500;margin-bottom:15px;display:flex;align-items:center;gap:10px}
+  .kicker::before{content:"";width:26px;height:2px;background:var(--ochre);border-radius:2px}
+  .sec-head{max-width:64ch;margin-bottom:42px}
+  .sec-head h2{font-size:clamp(27px,3.6vw,38px)}
+  .sec-head p{margin-top:14px;font-size:17px;color:var(--steel-2)}
+  .lead-p{font-size:17px;color:var(--steel-3);max-width:70ch}
+  .lead-p+.lead-p{margin-top:16px}
+  .lead-p b{color:var(--graphite);font-weight:600}
+  .band{background:var(--graphite);color:#fff}
+  .band .kicker{color:var(--ochre-soft)}.band .kicker::before{background:var(--blueprint-soft)}
+  .band .sec-head p,.band .lead-p{color:#AEB6C0}.band .lead-p b{color:#fff}
+  /* problem cards */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+  .mini{background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:14px;padding:22px}
+  .mini .ic{font-size:20px;margin-bottom:10px}
+  .mini h4{color:#fff;font-size:16px;margin-bottom:6px}.mini p{color:#AEB6C0;font-size:14px}
+  /* inclusions */
+  .phase-card{background:var(--card);border:1px solid var(--hair-d);border-radius:var(--r);padding:26px;box-shadow:var(--shadow);position:relative}
+  .phase-card.hero-p{border-color:rgba(230,151,31,.5)}
+  .phase-tag{display:inline-block;font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:7px;font-weight:600;margin-bottom:14px}
+  .t-f1{background:var(--ochre);color:#16191D}.t-f2{background:#E4EEF6;color:var(--blueprint)}.t-f3{background:var(--concrete-2);color:var(--steel-2)}
+  .phase-card h3{font-size:19px;margin-bottom:12px}
+  .feat{display:flex;gap:10px;padding:8px 0;font-size:14px;color:var(--steel-3);border-bottom:1px solid var(--hair-d)}
+  .feat:last-child{border-bottom:none}.feat .ck{color:var(--ok);font-weight:700;flex-shrink:0}
+  .feat b{color:var(--graphite);font-weight:600}
+  /* pricing */
+  .price-note{background:rgba(230,151,31,.1);border:1px solid rgba(230,151,31,.3);border-radius:12px;padding:13px 16px;font-size:13.5px;color:#7a5a15;margin-bottom:26px;display:flex;gap:10px}
+  .price-note b{color:#5c440f}
+  .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.price-grid{grid-template-columns:1fr}}
+  .price{background:var(--card);border:1px solid var(--hair-d);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+  .price.feature{border-color:rgba(230,151,31,.5)}
+  .price .ph{padding:22px 26px;border-bottom:1px solid var(--hair-d);background:linear-gradient(180deg,#fff,var(--concrete))}
+  .price .ph .k{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel-2)}
+  .price .ph h3{font-size:20px;margin-top:5px}
+  .price .amt{padding:22px 26px}
+  .price .mxn{font-family:'Space Grotesk';font-weight:700;font-size:34px;letter-spacing:-.02em}
+  .price .usd{font-family:'IBM Plex Mono';color:var(--steel-2);font-size:14px;margin-top:2px}
+  .price .per{font-size:14px;color:var(--steel);font-weight:500}
+  .price ul{list-style:none;padding:0 26px 24px}
+  .price li{display:flex;gap:9px;font-size:13.5px;color:var(--steel-3);padding:6px 0}
+  .price li .ck{color:var(--ok);font-weight:700}
+  .fx{font-size:12px;color:var(--steel);margin-top:18px;font-family:'IBM Plex Mono'}
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
+  @media(max-width:760px){.steps{grid-template-columns:1fr 1fr}}
+  .step{background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:14px;padding:22px;position:relative}
+  .step .n{font-family:'Space Grotesk';font-weight:700;font-size:24px;color:var(--ochre-soft);margin-bottom:8px}
+  .step h4{color:#fff;font-size:15.5px;margin-bottom:5px}.step p{color:#AEB6C0;font-size:13px}
+  /* cta band */
+  .cta-band{background:linear-gradient(135deg,var(--ochre),var(--ochre-deep));color:#16191D;border-radius:22px;padding:44px 40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+  .cta-band h2{font-size:28px;color:#16191D;max-width:20ch}
+  .cta-band p{margin-top:8px;font-size:15px;color:#3a2c08;max-width:46ch}
+  .cta-btn{background:#16191D;color:#fff;padding:15px 26px;border-radius:12px;font-weight:600;font-size:15px;white-space:nowrap;transition:transform .12s}
+  .cta-btn:hover{transform:translateY(-2px)}
+  footer{background:var(--graphite);color:var(--steel);padding:34px 0;border-top:1px solid var(--hair)}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  footer .mono{font-size:12px}footer b{color:var(--ochre-soft);font-weight:500}
+</style>
+</head>
+<body>
+<div class="pkg-bar"><div class="wrap">
+  <a class="brandmark" href="index.html"><div class="logo">A</div><b>AUDA&nbsp;OS</b><span class="x">×</span><span class="atelio mono">Atelio</span></a>
+  <nav class="pkg-nav">
+    <a href="propuesta.html" class="on">Propuesta</a>
+    <a href="alcance.html">Alcance</a>
+    <a href="plan.html">Plan</a>
+    <a href="sistema-diseno.html">Sistema de diseño</a>
+    <a href="desglose.html">Desglose</a>
+    <a href="demo.html" class="cta">Abrir demo →</a>
+  </nav>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <span class="eyebrow"><span class="dot"></span>Propuesta comercial</span>
+  <h1>Un solo sistema para correr <span class="a">toda la obra</span>.</h1>
+  <p class="lede">AUDA OS reemplaza las hojas de cálculo, las carpetas de Drive y los PDFs sueltos con una plataforma hecha a la medida de cómo Diego construye: <b>presupuestos con IA, control financiero por obra y proveedores por gremio</b>.</p>
+  <div class="meta">
+    <div class="chip"><div class="k">Cliente</div><div class="v">AUDA · Construcción</div></div>
+    <div class="chip"><div class="k">Preparado por</div><div class="v">Forma · Atelio</div></div>
+    <div class="chip"><div class="k">Para</div><div class="v">Diego (Dirección)</div></div>
+    <div class="chip"><div class="k">Validez</div><div class="v">30 días</div></div>
+  </div>
+</div></header>
+
+<!-- El momento -->
+<section class="band"><div class="wrap">
+  <div class="sec-head"><div class="kicker">El momento</div><h2>El negocio funciona — las herramientas ya no lo alcanzan</h2></div>
+  <p class="lead-p">Hoy cada obra obliga a rehacer trabajo a mano: el presupuesto se arma desde cero en Sheets, los pagos a Marco, Martín, Juan Luis, Kadiel, Rodrigo y el herrero se controlan de memoria, los archivos viven dispersos en Drive y la propuesta al cliente sale como un PDF suelto. Nada de eso está conectado, y el número que de verdad importa — <b>cuánto queda después del IVA</b> — nunca está a la vista.</p>
+  <div class="grid2" style="margin-top:32px">
+    <div class="mini"><div class="ic">🧮</div><h4>Presupuestos lentos y manuales</h4><p>Cada cotización se captura de cero, con riesgo de error en costos, indirectos e IVA.</p></div>
+    <div class="mini"><div class="ic">🤝</div><h4>Pagos por proveedor sin control</h4><p>Anticipos y saldos por gremio dispersos, sin un estado de cuenta claro por obra.</p></div>
+    <div class="mini"><div class="ic">📂</div><h4>Archivos desordenados</h4><p>Carpetas de Drive sin estructura; información difícil de encontrar entre obras.</p></div>
+    <div class="mini"><div class="ic">📄</div><h4>Sin visibilidad del margen</h4><p>El ingreso real después de IVA no se ve por obra; se calcula "a mano" o no se calcula.</p></div>
+  </div>
+</div></section>
+
+<!-- La solución -->
+<section><div class="wrap">
+  <div class="sec-head"><div class="kicker">La solución</div><h2>AUDA OS — el sistema operativo de tu obra</h2>
+  <p>Una plataforma web a la medida, construida sobre <b>Atelio</b> (el motor con el que Forma levanta sistemas para empresas). Se ve como AUDA, habla como Diego y crece por fases.</p></div>
+  <p class="lead-p">En lugar de cinco herramientas que no se hablan, AUDA OS reúne todo en un panel: un <b>asistente de IA</b> que entrevista al cliente con la voz de Diego y arma la propuesta con costos directos, indirectos e IVA; un <b>control financiero</b> que muestra anticipos, pagos e ingreso real por obra; un <b>directorio de proveedores</b> por gremio con saldos; y — por fases — bitácora de obra con fotos, expediente ordenado con recorridos virtuales, trámites y captación de clientes.</p>
+</div></div></section>
+
+<!-- Qué incluye -->
+<section class="band"><div class="wrap">
+  <div class="sec-head"><div class="kicker">Qué incluye</div><h2>Construido por fases, con foco en lo que da valor primero</h2>
+  <p>La Fase 1 es lo que se construye para arrancar: reemplaza las hojas de cálculo y se ve en la primera reunión. Las Fases 2 y 3 amplían el sistema una vez validado.</p></div>
+  <div class="grid3">
+    <div class="phase-card hero-p">
+      <span class="phase-tag t-f1">Fase 1 · Núcleo</span>
+      <h3>El corazón del sistema</h3>
+      <div class="feat"><span class="ck">✓</span><span><b>Presupuestos con IA</b> (voz de Diego)</span></div>
+      <div class="feat"><span class="ck">✓</span><span><b>Control financiero</b> por obra (IVA)</span></div>
+      <div class="feat"><span class="ck">✓</span><span><b>Plantillas de costos</b></span></div>
+      <div class="feat"><span class="ck">✓</span><span><b>Proveedores</b> por gremio</span></div>
+      <div class="feat"><span class="ck">✓</span><span><b>Panel de obra</b></span></div>
+    </div>
+    <div class="phase-card">
+      <span class="phase-tag t-f2">Fase 2 · Operación</span>
+      <h3>El día a día</h3>
+      <div class="feat"><span class="ck">✓</span><span>Bitácora de obra con fotos</span></div>
+      <div class="feat"><span class="ck">✓</span><span>Expediente ordenado por obra</span></div>
+      <div class="feat"><span class="ck">✓</span><span>Recorridos virtuales embebidos</span></div>
+      <div class="feat"><span class="ck">✓</span><span>Vista / portal para el cliente</span></div>
+    </div>
+    <div class="phase-card">
+      <span class="phase-tag t-f3">Fase 3 · Crecimiento</span>
+      <h3>Escala y clientes</h3>
+      <div class="feat"><span class="ck">✓</span><span>Trámites y permisos</span></div>
+      <div class="feat"><span class="ck">✓</span><span>Captación de clientes (Ads)</span></div>
+      <div class="feat"><span class="ck">✓</span><span>Pipeline de prospectos</span></div>
+    </div>
+  </div>
+  <p class="lead-p" style="margin-top:26px;font-size:15px">El alcance detallado de cada módulo está en la página <a href="alcance.html" style="color:var(--ochre-soft);font-weight:600">Alcance &amp; Plan de construcción →</a></p>
+</div></section>
+
+<!-- Inversión -->
+<section><div class="wrap">
+  <div class="sec-head"><div class="kicker">Inversión</div><h2>Una inversión clara, sin sorpresas</h2></div>
+  <div class="price-note">⚠️ <span><b>Cifras propuestas — por confirmar.</b> Los montos abajo son una estructura sugerida para revisión de Forma; ajústalos antes de enviar a Diego.</span></div>
+  <div class="price-grid">
+    <div class="price feature">
+      <div class="ph"><div class="k">Pago único</div><h3>Implementación · Fase 1</h3></div>
+      <div class="amt"><div class="mxn">$120,000 <span class="per">MXN</span></div><div class="usd">≈ $6,900 USD</div></div>
+      <ul>
+        <li><span class="ck">✓</span>Tenant AUDA configurado en Atelio</li>
+        <li><span class="ck">✓</span>5 módulos de Fase 1 listos y con datos</li>
+        <li><span class="ck">✓</span>Sistema de diseño y marca AUDA</li>
+        <li><span class="ck">✓</span>Migración inicial + capacitación</li>
+      </ul>
+    </div>
+    <div class="price">
+      <div class="ph"><div class="k">Recurrente</div><h3>Suscripción + soporte</h3></div>
+      <div class="amt"><div class="mxn">$4,900 <span class="per">MXN / mes</span></div><div class="usd">≈ $280 USD / mes</div></div>
+      <ul>
+        <li><span class="ck">✓</span>Hospedaje, respaldos y actualizaciones</li>
+        <li><span class="ck">✓</span>Soporte y mantenimiento del sistema</li>
+        <li><span class="ck">✓</span>Mejoras menores continuas</li>
+        <li><span class="ck">✓</span>Fases 2–3: cotización por módulo</li>
+      </ul>
+    </div>
+  </div>
+  <p class="fx">Tipo de cambio referencial ≈ $17.4 MXN/USD · IVA no incluido · cifras sujetas a confirmación.</p>
+</div></section>
+
+<!-- Por qué Forma -->
+<section class="band"><div class="wrap">
+  <div class="sec-head"><div class="kicker">Por qué Forma + Atelio</div><h2>No es un software genérico — es tu sistema</h2></div>
+  <div class="grid3">
+    <div class="mini"><div class="ic">🏗️</div><h4>Hecho a tu medida</h4><p>Diseñado alrededor de cómo Diego construye y cotiza, no un ERP forzado.</p></div>
+    <div class="mini"><div class="ic">⚙️</div><h4>Sobre una base probada</h4><p>Atelio ya opera sistemas para otros negocios; AUDA arranca sobre esa infraestructura.</p></div>
+    <div class="mini"><div class="ic">🚀</div><h4>Entrega por fases</h4><p>Valor desde la primera semana; el sistema crece sin frenar la operación.</p></div>
+  </div>
+</div></section>
+
+<!-- Cómo empezamos -->
+<section><div class="wrap">
+  <div class="sec-head"><div class="kicker">Cómo empezamos</div><h2>De la firma al sistema en vivo</h2></div>
+  <div class="steps" style="filter:none">
+    <div class="step" style="background:var(--card);border-color:var(--hair-d)"><div class="n" style="color:var(--ochre-deep)">1</div><h4 style="color:var(--graphite)">Firma</h4><p style="color:var(--steel-2)">Aprobación de propuesta y arranque.</p></div>
+    <div class="step" style="background:var(--card);border-color:var(--hair-d)"><div class="n" style="color:var(--ochre-deep)">2</div><h4 style="color:var(--graphite)">Intake</h4><p style="color:var(--steel-2)">Proveedores, obras activas, plantillas y marca.</p></div>
+    <div class="step" style="background:var(--card);border-color:var(--hair-d)"><div class="n" style="color:var(--ochre-deep)">3</div><h4 style="color:var(--graphite)">Build Fase 1</h4><p style="color:var(--steel-2)">Configuración y carga en el tenant AUDA.</p></div>
+    <div class="step" style="background:var(--card);border-color:var(--hair-d)"><div class="n" style="color:var(--ochre-deep)">4</div><h4 style="color:var(--graphite)">En vivo</h4><p style="color:var(--steel-2)">Capacitación y operación con datos reales.</p></div>
+  </div>
+  <p class="lead-p" style="margin-top:24px;font-size:15px">El calendario semana a semana está en la página <a href="plan.html" style="color:var(--ochre-deep);font-weight:600">Plan de proyecto →</a></p>
+</div></section>
+
+<!-- CTA -->
+<section style="padding-top:0"><div class="wrap">
+  <div class="cta-band">
+    <div><h2>Míralo funcionando, no solo en papel.</h2><p>El demo interactivo tiene el sistema corriendo: arma un presupuesto con IA y mira el ingreso real recalcularse en vivo.</p></div>
+    <a class="cta-btn" href="demo.html">Abrir el demo →</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span class="mono">AUDA OS · Propuesta comercial</span>
+  <span class="mono">Construido sobre <b>Atelio</b> · <b>Forma</b> · 2026</span>
+</div></footer>
+</body>
+</html>
