@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUDA OS — Desglose de Necesidades & Plano del Demo</title>
+<meta name="hz:slide-selector" content=".noslide">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --graphite:#16191D;
+    --graphite-2:#1E2228;
+    --graphite-3:#262B32;
+    --concrete:#F4F1EA;
+    --concrete-2:#EAE6DC;
+    --steel:#8A93A0;
+    --steel-2:#5B646F;
+    --ochre:#E6971F;
+    --ochre-soft:#F2B54B;
+    --blueprint:#2E6FA7;
+    --blueprint-soft:#6FA6D4;
+    --line:#E4A63212;
+    --hair:rgba(255,255,255,.08);
+    --hair-dark:rgba(22,25,29,.10);
+    --ok:#3E9E6E;
+    --shadow:0 20px 50px -24px rgba(22,25,29,.45);
+    --r:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--graphite);
+    background:var(--concrete);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:600;line-height:1.1;letter-spacing:-.01em}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+  section{padding:84px 0}
+
+  /* ---------- top bar ---------- */
+  .pkg-bar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(22,25,29,.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--hair);
+  }
+  .pkg-bar .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brandmark{display:flex;align-items:center;gap:12px}
+  .brandmark .logo{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--ochre),#C97F12);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk';font-weight:700;color:#16191D;font-size:16px;
+    box-shadow:0 6px 16px -6px rgba(230,151,31,.6);
+  }
+  .brandmark b{color:#fff;font-family:'Space Grotesk';font-weight:600;letter-spacing:.02em;font-size:15px}
+  .brandmark .x{color:var(--steel);font-size:12px;margin:0 2px}
+  .brandmark .atelio{color:var(--steel);font-weight:500;font-size:13px}
+  .pkg-nav{display:flex;gap:26px}
+  .pkg-nav a{color:var(--steel);text-decoration:none;font-size:13.5px;font-weight:500;transition:color .18s}
+  .pkg-nav a:hover{color:var(--ochre-soft)}
+  @media(max-width:820px){.pkg-nav{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{
+    background:
+      radial-gradient(900px 400px at 80% -5%, rgba(46,111,167,.16), transparent 60%),
+      radial-gradient(700px 380px at 5% 105%, rgba(230,151,31,.12), transparent 60%),
+      var(--graphite);
+    color:#fff;position:relative;overflow:hidden;
+    padding:96px 0 88px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);
+    background-size:48px 48px;
+    -webkit-mask-image:radial-gradient(circle at 70% 30%,#000,transparent 75%);
+    mask-image:radial-gradient(circle at 70% 30%,#000,transparent 75%);
+    opacity:.5;
+  }
+  .hero .wrap{position:relative}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ochre-soft);border:1px solid rgba(242,181,75,.35);
+    padding:7px 14px;border-radius:99px;margin-bottom:26px;
+    background:rgba(230,151,31,.06);
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--ochre);box-shadow:0 0 10px var(--ochre)}
+  .hero h1{font-size:clamp(38px,6vw,66px);color:#fff;max-width:16ch}
+  .hero h1 .accent{color:var(--ochre-soft)}
+  .hero .lede{
+    margin-top:24px;max-width:60ch;font-size:19px;color:#C9D0D8;font-weight:400;
+  }
+  .hero .lede b{color:#fff;font-weight:600}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:38px}
+  .chip{
+    display:flex;flex-direction:column;gap:2px;
+    background:rgba(255,255,255,.04);border:1px solid var(--hair);
+    border-radius:12px;padding:14px 18px;min-width:150px;
+  }
+  .chip .k{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel)}
+  .chip .v{font-family:'Space Grotesk';font-weight:600;color:#fff;font-size:15px}
+
+  /* ---------- section heads ---------- */
+  .sec-head{max-width:66ch;margin-bottom:48px}
+  .kicker{
+    font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--blueprint);font-weight:500;margin-bottom:16px;display:flex;align-items:center;gap:10px;
+  }
+  .kicker::before{content:"";width:26px;height:2px;background:var(--ochre);border-radius:2px}
+  .sec-head h2{font-size:clamp(28px,3.6vw,40px)}
+  .sec-head p{margin-top:16px;font-size:17px;color:var(--steel-2)}
+
+  /* ---------- current state ---------- */
+  .band{background:var(--graphite);color:#fff}
+  .band .kicker{color:var(--ochre-soft)}
+  .band .kicker::before{background:var(--blueprint-soft)}
+  .band .sec-head p{color:#AEB6C0}
+  .pain-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  @media(max-width:720px){.pain-grid{grid-template-columns:1fr}}
+  .pain{
+    background:rgba(255,255,255,.03);border:1px solid var(--hair);
+    border-radius:var(--r);padding:26px;position:relative;
+  }
+  .pain h4{color:#fff;font-size:17px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .pain h4 .ic{
+    width:30px;height:30px;border-radius:8px;background:rgba(230,151,31,.14);
+    display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;
+  }
+  .pain p{color:#AEB6C0;font-size:14.5px}
+  .pain .now{
+    margin-top:14px;font-family:'IBM Plex Mono';font-size:11.5px;color:var(--steel);
+    border-top:1px dashed var(--hair);padding-top:12px;
+  }
+  .pain .now b{color:var(--ochre-soft);font-weight:500}
+
+  .flow{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:36px;
+    background:rgba(46,111,167,.08);border:1px solid rgba(111,166,212,.2);
+    border-radius:14px;padding:18px 22px;
+  }
+  .flow .lbl{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blueprint-soft);margin-right:6px}
+  .flow .step{background:rgba(255,255,255,.06);border:1px solid var(--hair);border-radius:8px;padding:7px 13px;font-size:13px;color:#E7ECF1;font-weight:500}
+  .flow .arr{color:var(--steel);font-size:14px}
+
+  /* ---------- modules grid ---------- */
+  .mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:940px){.mod-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.mod-grid{grid-template-columns:1fr}}
+  .mod{
+    background:#fff;border:1px solid var(--hair-dark);border-radius:var(--r);
+    padding:26px 24px;position:relative;transition:transform .2s,box-shadow .2s,border-color .2s;
+    display:flex;flex-direction:column;
+  }
+  .mod:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:rgba(230,151,31,.4)}
+  .mod .ic{
+    width:44px;height:44px;border-radius:11px;margin-bottom:16px;
+    display:flex;align-items:center;justify-content:center;font-size:21px;
+    background:linear-gradient(135deg,var(--concrete-2),#fff);border:1px solid var(--hair-dark);
+  }
+  .mod.hero-mod{border-color:rgba(230,151,31,.55);box-shadow:0 0 0 1px rgba(230,151,31,.25)}
+  .mod.hero-mod .ic{background:linear-gradient(135deg,var(--ochre),#C97F12);border:none}
+  .mod h3{font-size:18px;margin-bottom:8px}
+  .mod .desc{font-size:14px;color:var(--steel-2);flex-grow:1}
+  .mod .maps{
+    margin-top:16px;padding-top:14px;border-top:1px solid var(--hair-dark);
+    font-size:12.5px;color:var(--steel-2);
+  }
+  .mod .maps b{color:var(--graphite);font-weight:600;font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.04em}
+  .badges{position:absolute;top:18px;right:18px;display:flex;gap:6px;flex-direction:column;align-items:flex-end}
+  .bdg{font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:6px;font-weight:600}
+  .bdg.hero{background:var(--ochre);color:#16191D}
+  .bdg.f1{background:#E4EEF6;color:var(--blueprint)}
+  .bdg.f2{background:var(--concrete-2);color:var(--steel-2)}
+  .bdg.f3{background:#F0ECE3;color:#9A8A6A}
+
+  /* ---------- hero module deep dive ---------- */
+  .deep{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:860px){.deep{grid-template-columns:1fr}}
+  .deep-card{
+    background:#fff;border:1px solid var(--hair-dark);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);
+  }
+  .deep-card .top{
+    background:var(--graphite);color:#fff;padding:26px 28px;position:relative;overflow:hidden;
+  }
+  .deep-card .top::after{
+    content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;
+    background:radial-gradient(circle,rgba(230,151,31,.4),transparent 70%);
+  }
+  .deep-card .top .n{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.14em;color:var(--ochre-soft);text-transform:uppercase}
+  .deep-card .top h3{color:#fff;font-size:23px;margin-top:8px;position:relative}
+  .deep-card .top p{color:#C1C8D0;font-size:14px;margin-top:8px;max-width:40ch;position:relative}
+  .deep-card .body{padding:24px 28px 28px}
+  .feat{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--hair-dark);font-size:14px}
+  .feat:last-child{border-bottom:none}
+  .feat .ck{color:var(--ok);flex-shrink:0;font-weight:700;margin-top:1px}
+  .feat b{font-weight:600}
+  .why{
+    margin-top:18px;background:rgba(230,151,31,.09);border:1px solid rgba(230,151,31,.28);
+    border-radius:12px;padding:14px 16px;font-size:13.5px;color:#7a5a15;
+  }
+  .why b{color:#5c440f;font-family:'Space Grotesk'}
+
+  /* ---------- voice sample ---------- */
+  .voice{
+    margin-top:20px;background:var(--graphite-2);border:1px solid var(--hair);border-radius:12px;
+    padding:16px 18px;
+  }
+  .voice .q{color:#E7ECF1;font-size:13.5px;padding:6px 0;display:flex;gap:9px}
+  .voice .q .who{font-family:'IBM Plex Mono';font-size:10px;color:var(--ochre-soft);flex-shrink:0;width:52px;padding-top:2px}
+  .voice .q.a .who{color:var(--blueprint-soft)}
+
+  /* ---------- roadmap ---------- */
+  .phase{display:grid;grid-template-columns:180px 1fr;gap:26px;padding:30px 0;border-top:1px solid var(--hair-dark)}
+  .phase:first-of-type{border-top:none}
+  @media(max-width:720px){.phase{grid-template-columns:1fr;gap:14px}}
+  .phase .side .tag{
+    display:inline-block;font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    padding:5px 11px;border-radius:7px;font-weight:600;margin-bottom:10px;
+  }
+  .phase.p1 .tag{background:var(--ochre);color:#16191D}
+  .phase.p2 .tag{background:#E4EEF6;color:var(--blueprint)}
+  .phase.p3 .tag{background:var(--concrete-2);color:var(--steel-2)}
+  .phase .side h3{font-size:20px}
+  .phase .side .when{font-size:13px;color:var(--steel-2);margin-top:4px}
+  .phase .items{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start}
+  .pill{
+    background:#fff;border:1px solid var(--hair-dark);border-radius:9px;padding:10px 14px;
+    font-size:13.5px;font-weight:500;color:var(--graphite);display:flex;align-items:center;gap:8px;
+  }
+  .pill .d{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .p1 .pill .d{background:var(--ochre)}
+  .p2 .pill .d{background:var(--blueprint)}
+  .p3 .pill .d{background:var(--steel)}
+  .phase .goal{width:100%;font-size:14px;color:var(--steel-2);margin-bottom:4px}
+
+  /* ---------- demo scope ---------- */
+  .scope{
+    background:var(--graphite);color:#fff;border-radius:24px;padding:52px 48px;position:relative;overflow:hidden;
+  }
+  .scope::before{
+    content:"";position:absolute;inset:0;
+    background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);
+    background-size:40px 40px;opacity:.4;
+    -webkit-mask-image:linear-gradient(135deg,#000,transparent 70%);mask-image:linear-gradient(135deg,#000,transparent 70%);
+  }
+  .scope .inner{position:relative}
+  .scope h2{color:#fff;font-size:30px;max-width:24ch}
+  .scope .sub{color:#B9C1CA;margin-top:14px;max-width:60ch;font-size:16px}
+  .scope-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:34px}
+  @media(max-width:720px){.scope-grid{grid-template-columns:1fr}}
+  .scope-item{
+    background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:12px;padding:18px 20px;
+    display:flex;gap:14px;
+  }
+  .scope-item .num{font-family:'Space Grotesk';font-weight:700;font-size:22px;color:var(--ochre-soft);line-height:1;flex-shrink:0}
+  .scope-item h4{color:#fff;font-size:15.5px;margin-bottom:4px}
+  .scope-item p{color:#AEB6C0;font-size:13px}
+  .outof{margin-top:26px;font-size:13.5px;color:var(--steel);position:relative}
+  .outof b{color:var(--blueprint-soft);font-weight:500}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--graphite);color:var(--steel);padding:40px 0;border-top:1px solid var(--hair)}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+  footer .mono{font-size:12px;letter-spacing:.04em}
+  footer b{color:#fff;font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="pkg-bar">
+  <div class="wrap">
+    <div class="brandmark">
+      <div class="logo">A</div>
+      <b>AUDA&nbsp;OS</b><span class="x">×</span><span class="atelio mono">Atelio</span>
+    </div>
+    <nav class="pkg-nav">
+      <a href="#reto">El reto</a>
+      <a href="#modulos">Módulos</a>
+      <a href="#hero">Módulos estrella</a>
+      <a href="#ruta">Hoja de ruta</a>
+      <a href="#demo">Alcance del demo</a>
+    </nav>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero noslide">
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>Desglose de necesidades · Plano del demo</span>
+    <h1>El sistema operativo de <span class="accent">obra</span> para la constructora de Diego.</h1>
+    <p class="lede">De Google Drive, hojas de cálculo y PDFs sueltos a <b>una sola plataforma</b> donde el presupuesto, los proveedores, los pagos y el IVA viven juntos — y donde una IA con la voz de Diego arma la propuesta por él.</p>
+    <div class="hero-meta">
+      <div class="chip"><span class="k">Cliente</span><span class="v">AUDA · Construcción</span></div>
+      <div class="chip"><span class="k">Sede</span><span class="v">México 🇲🇽</span></div>
+      <div class="chip"><span class="k">Base</span><span class="v">Atelio (tenant nuevo)</span></div>
+      <div class="chip"><span class="k">Módulos estrella</span><span class="v">2 para el demo</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- CURRENT STATE -->
+<section class="band" id="reto">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">Punto de partida</div>
+      <h2>Dónde vive hoy el negocio de Diego</h2>
+      <p>Toda la operación funciona, pero está repartida entre herramientas que no se hablan entre sí. Cada obra obliga a rehacer trabajo a mano. Esto es lo que el OS reemplaza.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain">
+        <h4><span class="ic">📂</span>Archivos dispersos y desordenados</h4>
+        <p>Las carpetas por obra viven en Google Drive sin una estructura consistente; Jesús ha estado ayudando a ordenarlas a mano.</p>
+        <div class="now"><b>Hoy:</b> Google Drive · carpetas manuales</div>
+      </div>
+      <div class="pain">
+        <h4><span class="ic">🧮</span>Presupuestos armados a mano</h4>
+        <p>Costos directos, indirectos (ej. gasolina), IVA y partidas se capturan cada vez desde cero en hojas de cálculo. Lento y propenso a errores.</p>
+        <div class="now"><b>Hoy:</b> Google Sheets · plantillas informales</div>
+      </div>
+      <div class="pain">
+        <h4><span class="ic">🤝</span>Pagos por proveedor sin control central</h4>
+        <p>Marco, Martín, Juan Luis, Kadiel, Rodrigo, el herrero… cada gremio con sus anticipos y saldos, sin un estado de cuenta claro por obra.</p>
+        <div class="now"><b>Hoy:</b> Hojas + memoria del equipo</div>
+      </div>
+      <div class="pain">
+        <h4><span class="ic">📄</span>Propuestas al cliente como PDFs sueltos</h4>
+        <p>Cada propuesta se exporta a PDF y se envía por separado; no hay un flujo vivo ni seguimiento de lo que el cliente ya vio o aprobó.</p>
+        <div class="now"><b>Hoy:</b> PDF export · envío manual</div>
+      </div>
+    </div>
+
+    <div class="flow">
+      <span class="lbl">Flujo de presentación actual</span>
+      <span class="step">Escaneo Polycam</span><span class="arr">→</span>
+      <span class="step">Importar a SketchUp</span><span class="arr">→</span>
+      <span class="step">Recorrido virtual (plugin Oculus)</span><span class="arr">→</span>
+      <span class="step">Presentación al cliente</span>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section id="modulos">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">La traducción</div>
+      <h2>Cada necesidad, convertida en un módulo del OS</h2>
+      <p>Tomamos la sesión de descubrimiento con Diego y la mapeamos a los módulos de Atelio. Los dos módulos <b>estrella</b> son el corazón del demo; el resto se activa por fases.</p>
+    </div>
+    <div class="mod-grid">
+
+      <div class="mod hero-mod">
+        <div class="badges"><span class="bdg hero">Estrella</span><span class="bdg f1">Fase 1</span></div>
+        <div class="ic">🤖</div>
+        <h3>Presupuestos con IA</h3>
+        <p class="desc">Un asistente que entrevista al cliente <b>con la voz de Diego</b>, hace las preguntas correctas y genera automáticamente la propuesta y el presupuesto detallado — con costos directos, indirectos e IVA.</p>
+        <div class="maps"><b>DE LA SESIÓN →</b> Project manager con IA · propuestas y presupuestos automáticos</div>
+      </div>
+
+      <div class="mod hero-mod">
+        <div class="badges"><span class="bdg hero">Estrella</span><span class="bdg f1">Fase 1</span></div>
+        <div class="ic">💰</div>
+        <h3>Control financiero por obra</h3>
+        <p class="desc">Anticipos recibidos, pagos a proveedores e <b>ingreso real después de IVA</b>, obra por obra. El número que Diego quiere ver de un vistazo, siempre al día.</p>
+        <div class="maps"><b>DE LA SESIÓN →</b> Seguimiento financiero · anticipos · pagos · ingreso real tras IVA</div>
+      </div>
+
+      <div class="mod">
+        <div class="badges"><span class="bdg f1">Fase 1</span></div>
+        <div class="ic">🧱</div>
+        <h3>Plantillas de costos</h3>
+        <p class="desc">Catálogo de partidas estándar (pisos, plafón, acabados…) con precios base y <b>espacios abiertos</b> para partidas a la medida en cada obra.</p>
+        <div class="maps"><b>DE LA SESIÓN →</b> Plantillas predefinidas + líneas personalizadas</div>
+      </div>
+
+      <div class="mod">
+        <div class="badges"><span class="bdg f1">Fase 1</span></div>
+        <div class="ic">👷</div>
+        <h3>Proveedores por gremio</h3>
+        <p class="desc">Directorio por oficio — electricista, plomero, carpintero, herrero — con saldos y pagos por proveedor, y asignación directa a cada obra.</p>
+        <div class="maps"><b>DE LA SESIÓN →</b> Gestión de proveedores por gremio</div>
+      </div>
+
+      <div class="mod">
+        <div class="badges"><span class="bdg f2">Fase 2</span></div>
+        <div class="ic">📸</div>
+        <h3>Bitácora de obra</h3>
+        <p class="desc">Feed de avances con <b>carga de fotos</b>, ordenado por obra y por fecha — listo para compartir el progreso con el cliente.</p>
+        <div class="maps"><b>DE LA SESIÓN →</b> Feed de actualizaciones con imágenes</div>
+      </div>
+
+      <div class="mod">
+        <div class="badges"><span class="bdg f2">Fase 2</span></div>
+        <div class="ic">🗂️</div>
+        <h3>Expediente & recorridos</h3>
+        <p class="desc">Reemplaza el caos de Drive: cada obra con su expediente ordenado (planos, contratos, PDFs) y sus <b>recorridos virtuales</b> Polycam/SketchUp embebidos.</p>
+        <div class="maps"><b>DE LA SESIÓN →</b> Carpetas ordenadas · flujo Polycam→SketchUp→VR</div>
+      </div>
+
+      <div class="mod">
+        <div class="badges"><span class="bdg f3">Fase 3</span></div>
+        <div class="ic">📈</div>
+        <h3>Captación de clientes</h3>
+        <p class="desc">Integración de generación de leads (Instagram Ads, Google) y un pipeline de prospectos que alimenta al asistente de presupuestos.</p>
+        <div class="maps"><b>DE LA SESIÓN →</b> Buscador de clientes · anuncios Instagram/Google</div>
+      </div>
+
+      <div class="mod">
+        <div class="badges"><span class="bdg f3">Fase 3</span></div>
+        <div class="ic">📋</div>
+        <h3>Trámites y permisos</h3>
+        <p class="desc">Seguimiento de permisos y procedimientos por obra. Reconocido como el más complejo — se construye una vez que el núcleo está sólido.</p>
+        <div class="maps"><b>DE LA SESIÓN →</b> Seguimiento de permisos (marcado como deseable)</div>
+      </div>
+
+      <div class="mod">
+        <div class="badges"><span class="bdg f1">Núcleo</span></div>
+        <div class="ic">🎛️</div>
+        <h3>Panel de obra</h3>
+        <p class="desc">El tablero de inicio: obras activas, dinero por cobrar y por pagar, pendientes y avances — el punto de entrada diario para Diego.</p>
+        <div class="maps"><b>DE LA SESIÓN →</b> Vista central que une todo lo anterior</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HERO MODULE DEEP DIVE -->
+<section class="band" id="hero">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">El factor "wow"</div>
+      <h2>Los dos módulos que hacen que Diego diga que sí</h2>
+      <p>Son los que atacan su dolor más directo — armar presupuestos y saber cuánto gana de verdad — y los que mejor se lucen en un demo en vivo.</p>
+    </div>
+    <div class="deep">
+
+      <div class="deep-card">
+        <div class="top">
+          <div class="n">Módulo estrella 01</div>
+          <h3>Presupuestos con IA · la voz de Diego</h3>
+          <p>El asistente entrevista, arma el presupuesto y entrega la propuesta lista para el cliente.</p>
+        </div>
+        <div class="body">
+          <div class="feat"><span class="ck">✓</span><span><b>Entrevista guiada:</b> hace las preguntas que haría Diego (tipo de obra, m², acabados, tiempos).</span></div>
+          <div class="feat"><span class="ck">✓</span><span><b>Plantillas + partidas abiertas:</b> jala precios base de pisos, plafón, etc. y deja capturar lo especial.</span></div>
+          <div class="feat"><span class="ck">✓</span><span><b>Estructura de costos completa:</b> directos, indirectos (gasolina) e IVA calculados solos.</span></div>
+          <div class="feat"><span class="ck">✓</span><span><b>Propuesta lista para cliente:</b> genera el documento con el tono y la marca de AUDA — sin exportar PDFs a mano.</span></div>
+          <div class="voice">
+            <div class="q"><span class="who mono">IA →</span><span>"¿Qué tipo de espacio vamos a intervenir y cuántos metros cuadrados aproximadamente?"</span></div>
+            <div class="q a"><span class="who mono">Cliente →</span><span>"Un departamento, unos 90 m², remodelación completa."</span></div>
+            <div class="q"><span class="who mono">IA →</span><span>"Perfecto. Con acabados tipo medio te armo pisos, plafón y baños. ¿Incluimos cocina integral?"</span></div>
+          </div>
+          <div class="why"><b>Por qué impresiona:</b> en el demo, Diego escribe cuatro respuestas y ve salir un presupuesto completo con IVA en segundos — lo que hoy le toma una tarde en Sheets.</div>
+        </div>
+      </div>
+
+      <div class="deep-card">
+        <div class="top">
+          <div class="n">Módulo estrella 02</div>
+          <h3>Control financiero por obra</h3>
+          <p>La verdad del dinero de cada proyecto: lo que entra, lo que sale y lo que realmente queda.</p>
+        </div>
+        <div class="body">
+          <div class="feat"><span class="ck">✓</span><span><b>Anticipos recibidos:</b> registro de cada pago del cliente contra el contrato de la obra.</span></div>
+          <div class="feat"><span class="ck">✓</span><span><b>Pagos a proveedores:</b> salidas por gremio (Marco, Martín, Juan Luis, Kadiel, Rodrigo, herrero…).</span></div>
+          <div class="feat"><span class="ck">✓</span><span><b>Ingreso real después de IVA:</b> el número neto que Diego quiere, calculado por obra.</span></div>
+          <div class="feat"><span class="ck">✓</span><span><b>Estado por proveedor:</b> cuánto se le ha pagado y cuánto se le debe a cada quien.</span></div>
+          <div class="voice">
+            <div class="q"><span class="who mono">OBRA →</span><span>Depto. Polanco · Anticipos: $180,000 · Pagado a proveedores: $96,400</span></div>
+            <div class="q a"><span class="who mono">NETO →</span><span>Ingreso real después de IVA: <b style="color:#7ED0A3">$72,090</b></span></div>
+          </div>
+          <div class="why"><b>Por qué impresiona:</b> por primera vez Diego ve, sin abrir una hoja, cuánto gana de verdad en cada obra — con el IVA ya descontado.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="ruta">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">Cómo lo construimos</div>
+      <h2>Hoja de ruta por fases</h2>
+      <p>Primero lo que quita dolor y se luce en el demo; luego lo operativo del día a día; al final lo más complejo y lo de crecimiento.</p>
+    </div>
+
+    <div class="phase p1">
+      <div class="side">
+        <span class="tag">Fase 1 · Demo</span>
+        <h3>El núcleo que enamora</h3>
+        <div class="when">Lo que construimos para el primer demo</div>
+      </div>
+      <div class="items">
+        <div class="goal">Reemplaza directamente las hojas de cálculo y muestra el valor en la primera reunión.</div>
+        <span class="pill"><span class="d"></span>Panel de obra</span>
+        <span class="pill"><span class="d"></span>Presupuestos con IA (voz de Diego)</span>
+        <span class="pill"><span class="d"></span>Plantillas de costos</span>
+        <span class="pill"><span class="d"></span>Control financiero por obra (IVA)</span>
+        <span class="pill"><span class="d"></span>Proveedores por gremio</span>
+      </div>
+    </div>
+
+    <div class="phase p2">
+      <div class="side">
+        <span class="tag">Fase 2 · Operación</span>
+        <h3>El día a día de la obra</h3>
+        <div class="when">Después de validar el núcleo</div>
+      </div>
+      <div class="items">
+        <div class="goal">Ordena los archivos y conecta el avance de obra con el cliente.</div>
+        <span class="pill"><span class="d"></span>Bitácora de obra con fotos</span>
+        <span class="pill"><span class="d"></span>Expediente por obra (adiós Drive desordenado)</span>
+        <span class="pill"><span class="d"></span>Recorridos virtuales embebidos</span>
+        <span class="pill"><span class="d"></span>Portal / vista para el cliente</span>
+      </div>
+    </div>
+
+    <div class="phase p3">
+      <div class="side">
+        <span class="tag">Fase 3 · Crecimiento</span>
+        <h3>Lo complejo y lo de escala</h3>
+        <div class="when">Con el sistema ya en marcha</div>
+      </div>
+      <div class="items">
+        <div class="goal">Los pendientes más pesados y la maquinaria de conseguir más clientes.</div>
+        <span class="pill"><span class="d"></span>Trámites y permisos</span>
+        <span class="pill"><span class="d"></span>Captación de clientes (Instagram/Google Ads)</span>
+        <span class="pill"><span class="d"></span>Pipeline de prospectos</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO SCOPE -->
+<section id="demo">
+  <div class="wrap">
+    <div class="scope">
+      <div class="inner">
+        <h2>Qué construimos para el primer demo</h2>
+        <p class="sub">Un tenant de AUDA en Atelio, sembrado con una obra de ejemplo y los proveedores reales de Diego, mostrando el recorrido completo: de la entrevista con IA al ingreso real después de IVA.</p>
+        <div class="scope-grid">
+          <div class="scope-item"><span class="num">1</span><div><h4>Presupuesto con IA, en vivo</h4><p>Contestar 4 preguntas y ver salir la propuesta con costos directos, indirectos e IVA.</p></div></div>
+          <div class="scope-item"><span class="num">2</span><div><h4>Control financiero de una obra</h4><p>Anticipos, pagos a proveedores e ingreso real después de IVA en una sola pantalla.</p></div></div>
+          <div class="scope-item"><span class="num">3</span><div><h4>Proveedores por gremio</h4><p>Directorio con los proveedores reales de Diego y sus saldos por obra.</p></div></div>
+          <div class="scope-item"><span class="num">4</span><div><h4>Panel de obra</h4><p>El tablero de inicio que une presupuesto, dinero y proveedores de un vistazo.</p></div></div>
+        </div>
+        <p class="outof"><b>Fuera del alcance del primer demo →</b> bitácora con fotos, expediente/recorridos, trámites y captación de leads llegan en Fase 2 y 3. Se muestran como "próximamente" para dar contexto sin frenar el arranque.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="mono">AUDA OS · Desglose de necesidades &amp; plano del demo</span>
+    <span class="mono">Construido sobre <b>Atelio</b> · <b>Forma</b> · Julio 2026</span>
+  </div>
+</footer>
+
+</body>
+</html>

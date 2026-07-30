@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUDA OS — Demo interactivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --graphite:#16191D; --graphite-2:#1E2228; --graphite-3:#262B32; --graphite-4:#2F353D;
+    --concrete:#F4F1EA; --concrete-2:#EAE6DC; --card:#FFFFFF;
+    --steel:#8A93A0; --steel-2:#5B646F; --steel-3:#3A424B;
+    --ochre:#E6971F; --ochre-soft:#F2B54B; --ochre-deep:#C97F12;
+    --blueprint:#2E6FA7; --blueprint-soft:#6FA6D4;
+    --ok:#3E9E6E; --ok-soft:#7ED0A3; --warn:#D9822B; --danger:#C6553B;
+    --hair:rgba(255,255,255,.08); --hair-d:rgba(22,25,29,.09);
+    --shadow:0 18px 44px -22px rgba(22,25,29,.4);
+    --r:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--graphite);background:var(--concrete);-webkit-font-smoothing:antialiased;line-height:1.5}
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-.01em;line-height:1.15}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  input,select{font-family:inherit}
+
+  /* ---------- app shell ---------- */
+  .app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+  @media(max-width:880px){.app{grid-template-columns:1fr}}
+
+  /* sidebar */
+  .side{background:var(--graphite);color:#fff;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;border-right:1px solid var(--hair)}
+  @media(max-width:880px){.side{position:relative;height:auto}}
+  .brand{display:flex;align-items:center;gap:11px;padding:20px 20px 18px;border-bottom:1px solid var(--hair)}
+  .brand .logo{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--ochre),var(--ochre-deep));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;color:#16191D;font-size:17px;box-shadow:0 6px 16px -6px rgba(230,151,31,.6)}
+  .brand .nm b{display:block;font-family:'Space Grotesk';font-weight:600;font-size:15px;letter-spacing:.02em}
+  .brand .nm span{font-size:11px;color:var(--steel);font-family:'IBM Plex Mono'}
+  .nav{padding:14px 12px;flex-grow:1;overflow-y:auto}
+  .nav .grp{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel);padding:14px 12px 8px}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#C7CDD4;text-decoration:none;font-size:14px;font-weight:500;margin-bottom:2px;transition:background .15s,color .15s;border:1px solid transparent}
+  .nav a .ic{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+  .nav a:hover{background:rgba(255,255,255,.05);color:#fff}
+  .nav a.active{background:rgba(230,151,31,.14);color:#fff;border-color:rgba(230,151,31,.35)}
+  .nav a.soon{opacity:.42;cursor:not-allowed}
+  .nav a.soon .tag{margin-left:auto;font-family:'IBM Plex Mono';font-size:8.5px;letter-spacing:.1em;background:var(--graphite-3);padding:2px 6px;border-radius:5px;color:var(--steel)}
+  .side .foot{padding:14px 18px;border-top:1px solid var(--hair);font-size:11px;color:var(--steel);font-family:'IBM Plex Mono'}
+  .side .foot b{color:var(--ochre-soft);font-weight:500}
+
+  /* main */
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{height:64px;background:rgba(244,241,234,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair-d);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:20}
+  .topbar .crumb{font-size:13px;color:var(--steel-2);font-family:'IBM Plex Mono'}
+  .topbar .crumb b{color:var(--graphite);font-weight:600;font-family:'Space Grotesk'}
+  .topbar .right{display:flex;align-items:center;gap:14px}
+  .obra-sel{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--hair-d);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:500}
+  .obra-sel select{border:none;background:none;font-size:13px;font-weight:600;color:var(--graphite);outline:none;cursor:pointer}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blueprint),#244f78);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:13px;font-family:'Space Grotesk'}
+  .view{padding:32px 30px 60px;max-width:1100px;width:100%}
+  @media(max-width:560px){.view{padding:22px 16px 50px}.topbar{padding:0 16px}}
+
+  .page-head{margin-bottom:26px}
+  .page-head h1{font-size:27px}
+  .page-head p{color:var(--steel-2);margin-top:6px;font-size:15px}
+  .hidden{display:none!important}
+
+  /* KPI cards */
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+  @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:460px){.kpi-row{grid-template-columns:1fr}}
+  .kpi{background:var(--card);border:1px solid var(--hair-d);border-radius:var(--r);padding:20px}
+  .kpi .k{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--steel-2);display:flex;align-items:center;gap:7px}
+  .kpi .k .dot{width:8px;height:8px;border-radius:50%}
+  .kpi .v{font-family:'Space Grotesk';font-weight:700;font-size:28px;margin-top:10px;letter-spacing:-.02em}
+  .kpi .sub{font-size:12px;color:var(--steel);margin-top:4px}
+  .kpi.accent{background:var(--graphite);color:#fff}
+  .kpi.accent .k{color:var(--steel)}
+  .kpi.accent .sub{color:var(--steel)}
+
+  .card{background:var(--card);border:1px solid var(--hair-d);border-radius:var(--r);padding:24px;margin-bottom:20px}
+  .card h3{font-size:17px;margin-bottom:4px;display:flex;align-items:center;gap:9px}
+  .card .card-sub{font-size:13px;color:var(--steel-2);margin-bottom:18px}
+  .two-col{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
+  @media(max-width:820px){.two-col{grid-template-columns:1fr}}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{text-align:left;font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--steel-2);font-weight:500;padding:10px 10px;border-bottom:1px solid var(--hair-d)}
+  td{padding:12px 10px;border-bottom:1px solid var(--hair-d)}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-family:'IBM Plex Mono'}
+  .tag-gremio{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:7px;background:var(--concrete-2);color:var(--steel-3)}
+  .tag-gremio .d{width:7px;height:7px;border-radius:50%}
+  .pos{color:var(--ok);font-weight:600}
+  .neg{color:var(--danger);font-weight:600}
+  .chip-status{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.06em;padding:3px 8px;border-radius:6px;text-transform:uppercase;font-weight:600}
+  .st-activa{background:#E4F1EA;color:var(--ok)}
+  .st-cotiz{background:#FBF0DC;color:var(--warn)}
+  .st-cierre{background:#E4EEF6;color:var(--blueprint)}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--ochre);color:#16191D;font-weight:600;font-size:14px;padding:11px 18px;border-radius:10px;transition:transform .12s,box-shadow .15s}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 22px -12px rgba(230,151,31,.9)}
+  .btn.ghost{background:var(--card);border:1px solid var(--hair-d);color:var(--graphite)}
+  .btn.dark{background:var(--graphite);color:#fff}
+  .btn.sm{padding:8px 13px;font-size:13px}
+
+  /* ---------- AI assistant ---------- */
+  .ai-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  @media(max-width:900px){.ai-wrap{grid-template-columns:1fr}}
+  .ai-panel{background:var(--graphite);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+  .ai-head{padding:18px 22px;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:12px}
+  .ai-head .bot{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--ochre),var(--ochre-deep));display:flex;align-items:center;justify-content:center;font-size:19px}
+  .ai-head .t b{color:#fff;font-family:'Space Grotesk';font-size:15px;display:block}
+  .ai-head .t span{color:var(--ochre-soft);font-size:11px;font-family:'IBM Plex Mono'}
+  .ai-body{padding:20px 22px;max-height:560px;overflow-y:auto}
+  .bubble{margin-bottom:16px}
+  .bubble .who{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ochre-soft);margin-bottom:6px}
+  .bubble .msg{background:var(--graphite-2);border:1px solid var(--hair);color:#E7ECF1;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.5}
+  .q-field{margin-top:12px}
+  .q-field label{display:block;font-size:12.5px;color:#AEB6C0;margin-bottom:8px;font-weight:500}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{background:var(--graphite-3);border:1px solid var(--hair);color:#D6DBE1;padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;transition:all .13s}
+  .opt:hover{border-color:var(--ochre)}
+  .opt.sel{background:var(--ochre);color:#16191D;border-color:var(--ochre)}
+  .q-field input[type=range]{width:100%;accent-color:var(--ochre)}
+  .q-field .rangeval{font-family:'Space Grotesk';font-weight:700;color:#fff;font-size:20px;margin-top:4px}
+  .q-field .rangeval small{color:var(--steel);font-weight:500;font-size:12px;font-family:'Inter'}
+  .num-inp{display:flex;align-items:center;gap:10px}
+  .num-inp button{width:34px;height:34px;border-radius:8px;background:var(--graphite-3);border:1px solid var(--hair);color:#fff;font-size:17px;font-weight:600}
+  .num-inp .val{font-family:'Space Grotesk';font-weight:700;font-size:20px;color:#fff;min-width:28px;text-align:center}
+  .ai-foot{padding:16px 22px;border-top:1px solid var(--hair);display:flex;gap:10px;align-items:center}
+  .ai-foot .hint{font-size:11.5px;color:var(--steel);flex-grow:1;font-family:'IBM Plex Mono'}
+
+  /* proposal output */
+  .prop{background:var(--card);border:1px solid var(--hair-d);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;position:sticky;top:88px}
+  .prop .ph{padding:20px 24px;border-bottom:1px solid var(--hair-d);display:flex;justify-content:space-between;align-items:flex-start;background:linear-gradient(180deg,#fff,var(--concrete))}
+  .prop .ph .l .k{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel-2)}
+  .prop .ph .l h3{font-size:19px;margin-top:4px}
+  .prop .ph .l p{font-size:12.5px;color:var(--steel-2);margin-top:2px}
+  .prop .ph .stamp{font-family:'IBM Plex Mono';font-size:10px;color:var(--ochre-deep);border:1px solid rgba(230,151,31,.4);background:rgba(230,151,31,.08);padding:5px 9px;border-radius:7px;text-align:center}
+  .prop .pb{padding:12px 24px}
+  .prop-empty{padding:60px 24px;text-align:center;color:var(--steel-2)}
+  .prop-empty .big{font-size:40px;margin-bottom:14px;opacity:.5}
+  .prop-empty p{font-size:14px;max-width:32ch;margin:0 auto}
+  .li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--hair-d);font-size:13.5px}
+  .li:last-of-type{border-bottom:none}
+  .li .desc{color:var(--steel-3)}
+  .li .desc small{display:block;color:var(--steel);font-size:11px;font-family:'IBM Plex Mono';margin-top:1px}
+  .li .amt{font-family:'IBM Plex Mono';font-weight:500}
+  .sec-lbl{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--blueprint);padding:16px 0 4px;font-weight:600}
+  .totals{background:var(--concrete);margin:12px -24px 0;padding:16px 24px;border-top:1px solid var(--hair-d)}
+  .totrow{display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;color:var(--steel-3)}
+  .totrow.grand{font-family:'Space Grotesk';font-weight:700;font-size:20px;color:var(--graphite);border-top:1px solid var(--hair-d);margin-top:8px;padding-top:12px}
+  .totrow .m{font-family:'IBM Plex Mono'}
+  .totrow.net{color:var(--ok);font-weight:600}
+
+  .grow{animation:grow .35s ease}
+  @keyframes grow{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* filters */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .filters .f{background:var(--card);border:1px solid var(--hair-d);padding:7px 13px;border-radius:9px;font-size:13px;font-weight:500;color:var(--steel-2)}
+  .filters .f.active{background:var(--graphite);color:#fff;border-color:var(--graphite)}
+
+  /* finance bars */
+  .fin-visual{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+  .bar-row{display:flex;flex-direction:column;gap:5px}
+  .bar-row .lbl{display:flex;justify-content:space-between;font-size:13px}
+  .bar-row .lbl b{font-family:'IBM Plex Mono';font-weight:500}
+  .bar{height:12px;border-radius:6px;background:var(--concrete-2);overflow:hidden}
+  .bar span{display:block;height:100%;border-radius:6px}
+  .add-pay{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
+  .add-pay select,.add-pay input{border:1px solid var(--hair-d);border-radius:8px;padding:9px 11px;font-size:13px;background:var(--card)}
+  .add-pay input{width:120px}
+  .note{font-size:12px;color:var(--steel);margin-top:10px;font-family:'IBM Plex Mono'}
+
+  .plantilla-tip{background:rgba(46,111,167,.07);border:1px solid rgba(46,111,167,.18);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--steel-3);margin-bottom:18px}
+  .plantilla-tip b{color:var(--blueprint)}
+  .editable{border:1px dashed transparent;border-radius:6px;padding:2px 6px;transition:border-color .15s}
+  .editable:hover{border-color:var(--ochre)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">A</div>
+      <div class="nm"><b>AUDA&nbsp;OS</b><span>Sistema de obra</span></div>
+    </div>
+    <nav class="nav">
+      <div class="grp">Fase 1 · Núcleo</div>
+      <a data-view="panel" class="active"><span class="ic">🎛️</span>Panel de obra</a>
+      <a data-view="presupuestos"><span class="ic">🤖</span>Presupuestos con IA</a>
+      <a data-view="plantillas"><span class="ic">🧱</span>Plantillas de costos</a>
+      <a data-view="finanzas"><span class="ic">💰</span>Finanzas por obra</a>
+      <a data-view="proveedores"><span class="ic">👷</span>Proveedores</a>
+      <div class="grp">Próximamente · Fase 2–3</div>
+      <a class="soon"><span class="ic">📸</span>Bitácora de obra<span class="tag">F2</span></a>
+      <a class="soon"><span class="ic">🗂️</span>Expediente & recorridos<span class="tag">F2</span></a>
+      <a class="soon"><span class="ic">📋</span>Trámites y permisos<span class="tag">F3</span></a>
+      <a class="soon"><span class="ic">📈</span>Captación de clientes<span class="tag">F3</span></a>
+    </nav>
+    <div class="foot">Demo · construido sobre <b>Atelio</b></div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb"><b id="crumb">Panel de obra</b> · AUDA Construcción</div>
+      <div class="right">
+        <div class="obra-sel">
+          <span style="font-size:15px">🏗️</span>
+          <select id="obraSel"></select>
+        </div>
+        <div class="avatar">DR</div>
+      </div>
+    </div>
+
+    <!-- ========== PANEL ========== -->
+    <div class="view" id="view-panel">
+      <div class="page-head">
+        <h1>Buenos días, Diego 👋</h1>
+        <p>Todas tus obras, el dinero y los proveedores — en un solo lugar.</p>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="k"><span class="dot" style="background:var(--blueprint)"></span>Obras activas</div><div class="v" id="k-obras">3</div><div class="sub">2 en ejecución · 1 en cotización</div></div>
+        <div class="kpi"><div class="k"><span class="dot" style="background:var(--ok)"></span>Anticipos recibidos</div><div class="v" id="k-ant">$0</div><div class="sub">Acumulado del mes</div></div>
+        <div class="kpi"><div class="k"><span class="dot" style="background:var(--warn)"></span>Pagado a proveedores</div><div class="v" id="k-pag">$0</div><div class="sub">Salidas del mes</div></div>
+        <div class="kpi accent"><div class="k"><span class="dot" style="background:var(--ochre)"></span>Ingreso real (post-IVA)</div><div class="v" id="k-net" style="color:var(--ok-soft)">$0</div><div class="sub">Suma neta de obras activas</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h3>🏗️ Obras</h3>
+          <div class="card-sub">Estado y balance de cada proyecto.</div>
+          <table id="tbl-obras"><thead><tr><th>Obra</th><th>Estado</th><th class="num">Anticipos</th><th class="num">Pagado</th><th class="num">Neto post-IVA</th></tr></thead><tbody></tbody></table>
+        </div>
+        <div class="card">
+          <h3>⚡ Pendientes</h3>
+          <div class="card-sub">Lo que necesita tu atención hoy.</div>
+          <table><tbody>
+            <tr><td>Enviar propuesta · <b>Local Roma Norte</b></td><td class="num"><span class="chip-status st-cotiz">Cotización</span></td></tr>
+            <tr><td>Pago pendiente · <b>Herrería (Herrero)</b></td><td class="num neg">$18,500</td></tr>
+            <tr><td>Anticipo por cobrar · <b>Casa Coyoacán</b></td><td class="num"><span class="chip-status st-cierre">2ª exhib.</span></td></tr>
+            <tr><td>Subir avance con fotos · <b>Depto. Polanco</b></td><td class="num" style="color:var(--steel)">Fase 2</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PRESUPUESTOS IA ========== -->
+    <div class="view hidden" id="view-presupuestos">
+      <div class="page-head">
+        <h1>Presupuestos con IA</h1>
+        <p>El asistente entrevista al cliente <b>con la voz de Diego</b> y arma la propuesta con costos directos, indirectos e IVA. Contesta las preguntas y genera.</p>
+      </div>
+      <div class="ai-wrap">
+        <!-- assistant -->
+        <div class="ai-panel">
+          <div class="ai-head">
+            <div class="bot">🤖</div>
+            <div class="t"><b>Asistente AUDA</b><span>Entrevista guiada · voz de Diego</span></div>
+          </div>
+          <div class="ai-body" id="aiBody"></div>
+          <div class="ai-foot">
+            <span class="hint" id="aiHint">Contesta para armar el presupuesto</span>
+            <button class="btn" id="genBtn">⚡ Generar propuesta</button>
+          </div>
+        </div>
+        <!-- proposal -->
+        <div class="prop" id="prop">
+          <div class="prop-empty" id="propEmpty">
+            <div class="big">📄</div>
+            <p>Aquí aparece la propuesta lista para el cliente en cuanto generes el presupuesto.</p>
+          </div>
+          <div id="propContent" class="hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PLANTILLAS ========== -->
+    <div class="view hidden" id="view-plantillas">
+      <div class="page-head">
+        <h1>Plantillas de costos</h1>
+        <p>Partidas estándar con precio base. La IA jala de aquí para armar cada presupuesto — y siempre puedes agregar partidas a la medida.</p>
+      </div>
+      <div class="plantilla-tip">💡 <b>Cómo funciona:</b> cada partida tiene un precio unitario base. El nivel de acabado (básico / medio / premium) lo ajusta automáticamente. Pasa el cursor sobre un precio — en el sistema real es editable por Diego.</div>
+      <div class="card">
+        <h3>🧱 Catálogo de partidas</h3>
+        <div class="card-sub">Precios base en pesos mexicanos (material + mano de obra).</div>
+        <table id="tbl-plantillas"><thead><tr><th>Partida</th><th>Unidad</th><th class="num">Básico</th><th class="num">Medio</th><th class="num">Premium</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <!-- ========== FINANZAS ========== -->
+    <div class="view hidden" id="view-finanzas">
+      <div class="page-head">
+        <h1>Finanzas por obra</h1>
+        <p>Lo que entra, lo que sale y — el número que importa — <b>cuánto queda de verdad después de IVA</b>.</p>
+      </div>
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="kpi"><div class="k"><span class="dot" style="background:var(--ok)"></span>Anticipos recibidos</div><div class="v" id="f-ant">$0</div></div>
+        <div class="kpi"><div class="k"><span class="dot" style="background:var(--warn)"></span>Pagado a proveedores</div><div class="v" id="f-pag">$0</div></div>
+        <div class="kpi accent"><div class="k"><span class="dot" style="background:var(--ochre)"></span>Ingreso real post-IVA</div><div class="v" id="f-net" style="color:var(--ok-soft)">$0</div><div class="sub" id="f-net-sub"></div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <h3>💸 Movimientos de <span id="f-obra-name"></span></h3>
+          <div class="card-sub">Anticipos del cliente y pagos a cada gremio.</div>
+          <table id="tbl-fin"><thead><tr><th>Concepto</th><th>Tipo</th><th class="num">Monto</th></tr></thead><tbody></tbody></table>
+          <div class="add-pay">
+            <select id="payGremio"></select>
+            <input type="number" id="payMonto" placeholder="Monto $" min="0">
+            <button class="btn sm dark" id="payBtn">+ Registrar pago</button>
+          </div>
+          <div class="note">Prueba a registrar un pago y observa cómo el ingreso real se recalcula solo.</div>
+        </div>
+        <div class="card">
+          <h3>📊 Desglose</h3>
+          <div class="card-sub">Del anticipo al ingreso neto.</div>
+          <div class="fin-visual" id="finBars"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PROVEEDORES ========== -->
+    <div class="view hidden" id="view-proveedores">
+      <div class="page-head">
+        <h1>Proveedores</h1>
+        <p>El directorio de Diego por gremio, con lo pagado y el saldo pendiente de cada quien.</p>
+      </div>
+      <div class="filters" id="gremioFilters"></div>
+      <div class="card">
+        <table id="tbl-prov"><thead><tr><th>Proveedor</th><th>Gremio</th><th>Obra asignada</th><th class="num">Pagado</th><th class="num">Saldo</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ============ DATA ============ */
+const MXN = n => '$' + Math.round(n).toLocaleString('es-MX');
+const IVA = 0.16;
+
+const gremios = {
+  'Albañilería':{c:'#B5723A'}, 'Electricidad':{c:'#E6971F'}, 'Plomería':{c:'#2E6FA7'},
+  'Carpintería':{c:'#8A6D3B'}, 'Pintura':{c:'#6FA6D4'}, 'Herrería':{c:'#5B646F'}
+};
+
+const proveedores = [
+  {n:'Kadiel Méndez', g:'Albañilería', obra:'Depto. Polanco', pagado:42000, saldo:15000},
+  {n:'Marco Aguilar', g:'Electricidad', obra:'Depto. Polanco', pagado:28500, saldo:6500},
+  {n:'Juan Luis Ortega', g:'Plomería', obra:'Casa Coyoacán', pagado:19000, saldo:9000},
+  {n:'Martín Reyes', g:'Carpintería', obra:'Casa Coyoacán', pagado:33000, saldo:22000},
+  {n:'Rodrigo Salas', g:'Pintura', obra:'Depto. Polanco', pagado:14500, saldo:0},
+  {n:'Taller El Herrero', g:'Herrería', obra:'Casa Coyoacán', pagado:11000, saldo:18500},
+];
+
+// Plantillas: precio base (medio). Básico = x0.85, Premium = x1.4
+const plantillas = [
+  {p:'Demolición y retiro', u:'m²', base:150, key:'demolicion'},
+  {p:'Piso porcelánico', u:'m²', base:680, key:'pisos'},
+  {p:'Plafón de tablaroca', u:'m²', base:480, key:'plafon'},
+  {p:'Pintura de muros', u:'m²', base:190, key:'pintura'},
+  {p:'Instalación eléctrica', u:'m²', base:320, key:'electrica'},
+  {p:'Instalación hidrosanitaria', u:'m²', base:290, key:'plomeria'},
+  {p:'Cocina integral', u:'proyecto', base:52000, key:'cocina'},
+  {p:'Closet a la medida', u:'proyecto', base:19500, key:'closets'},
+  {p:'Baño completo (remodelación)', u:'baño', base:38000, key:'bano'},
+  {p:'Cancelería de aluminio', u:'proyecto', base:24000, key:'canceleria'},
+];
+const MULT = {'Básico':0.85,'Medio':1.0,'Premium':1.4};
+
+// Obras seed: movimientos = {desc, tipo:'anticipo'|'pago', gremio?, monto}
+const obras = [
+  {id:'polanco', nombre:'Depto. Polanco', estado:'activa', m2:92,
+   mov:[
+     {desc:'Anticipo inicial (contrato)', tipo:'anticipo', monto:180000},
+     {desc:'2ª exhibición', tipo:'anticipo', monto:120000},
+     {desc:'Kadiel Méndez', tipo:'pago', gremio:'Albañilería', monto:42000},
+     {desc:'Marco Aguilar', tipo:'pago', gremio:'Electricidad', monto:28500},
+     {desc:'Rodrigo Salas', tipo:'pago', gremio:'Pintura', monto:14500},
+   ]},
+  {id:'coyoacan', nombre:'Casa Coyoacán', estado:'activa', m2:210,
+   mov:[
+     {desc:'Anticipo inicial (contrato)', tipo:'anticipo', monto:350000},
+     {desc:'Martín Reyes', tipo:'pago', gremio:'Carpintería', monto:33000},
+     {desc:'Juan Luis Ortega', tipo:'pago', gremio:'Plomería', monto:19000},
+     {desc:'Taller El Herrero', tipo:'pago', gremio:'Herrería', monto:11000},
+   ]},
+  {id:'roma', nombre:'Local Roma Norte', estado:'cotizacion', m2:75, mov:[]},
+];
+let currentObra = obras[0];
+
+/* ============ NAV ============ */
+const crumbNames = {panel:'Panel de obra',presupuestos:'Presupuestos con IA',plantillas:'Plantillas de costos',finanzas:'Finanzas por obra',proveedores:'Proveedores'};
+document.querySelectorAll('.nav a[data-view]').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    const v=a.dataset.view;
+    document.querySelectorAll('.view').forEach(x=>x.classList.add('hidden'));
+    document.getElementById('view-'+v).classList.remove('hidden');
+    document.getElementById('crumb').textContent=crumbNames[v];
+    window.scrollTo(0,0);
+  });
+});
+
+/* ============ OBRA SELECTOR ============ */
+const obraSel=document.getElementById('obraSel');
+obras.forEach(o=>{const op=document.createElement('option');op.value=o.id;op.textContent=o.nombre;obraSel.appendChild(op);});
+obraSel.addEventListener('change',()=>{currentObra=obras.find(o=>o.id===obraSel.value);renderFinanzas();});
+
+/* ============ CALC ============ */
+function calcObra(o){
+  const ant=o.mov.filter(m=>m.tipo==='anticipo').reduce((s,m)=>s+m.monto,0);
+  const pag=o.mov.filter(m=>m.tipo==='pago').reduce((s,m)=>s+m.monto,0);
+  const bruto=ant-pag;
+  const ivaAmt=ant>0? ant - ant/(1+IVA) : 0; // IVA contenido en lo cobrado
+  const neto=ant/(1+IVA) - pag; // ingreso real: base sin IVA menos pagos
+  return {ant,pag,bruto,ivaAmt,neto};
+}
+
+/* ============ PANEL ============ */
+function renderPanel(){
+  let tA=0,tP=0,tN=0,activas=0;
+  const tb=document.querySelector('#tbl-obras tbody');tb.innerHTML='';
+  obras.forEach(o=>{
+    const c=calcObra(o);
+    if(o.estado==='activa'){tA+=c.ant;tP+=c.pag;tN+=c.neto;activas++;}
+    const stMap={activa:['st-activa','Activa'],cotizacion:['st-cotiz','Cotización'],cierre:['st-cierre','Cierre']};
+    const st=stMap[o.estado];
+    const netCell=o.estado==='cotizacion'?'<span style="color:var(--steel)">—</span>':MXN(c.neto);
+    tb.innerHTML+=`<tr><td><b>${o.nombre}</b><br><small class="mono" style="color:var(--steel)">${o.m2} m²</small></td>
+      <td><span class="chip-status ${st[0]}">${st[1]}</span></td>
+      <td class="num">${o.estado==='cotizacion'?'—':MXN(c.ant)}</td>
+      <td class="num">${o.estado==='cotizacion'?'—':MXN(c.pag)}</td>
+      <td class="num pos">${netCell}</td></tr>`;
+  });
+  document.getElementById('k-obras').textContent=obras.length;
+  document.getElementById('k-ant').textContent=MXN(tA);
+  document.getElementById('k-pag').textContent=MXN(tP);
+  document.getElementById('k-net').textContent=MXN(tN);
+}
+
+/* ============ PLANTILLAS ============ */
+function renderPlantillas(){
+  const tb=document.querySelector('#tbl-plantillas tbody');tb.innerHTML='';
+  plantillas.forEach(p=>{
+    tb.innerHTML+=`<tr>
+      <td><b>${p.p}</b></td><td class="mono" style="color:var(--steel-2)">${p.u}</td>
+      <td class="num"><span class="editable">${MXN(p.base*MULT['Básico'])}</span></td>
+      <td class="num"><span class="editable">${MXN(p.base)}</span></td>
+      <td class="num"><span class="editable">${MXN(p.base*MULT['Premium'])}</span></td></tr>`;
+  });
+}
+
+/* ============ PROVEEDORES ============ */
+let gremioFilter='Todos';
+function renderProvFilters(){
+  const wrap=document.getElementById('gremioFilters');wrap.innerHTML='';
+  ['Todos',...Object.keys(gremios)].forEach(g=>{
+    const b=document.createElement('button');b.className='f'+(g===gremioFilter?' active':'');
+    b.textContent=g;b.onclick=()=>{gremioFilter=g;renderProvFilters();renderProv();};
+    wrap.appendChild(b);
+  });
+}
+function renderProv(){
+  const tb=document.querySelector('#tbl-prov tbody');tb.innerHTML='';
+  proveedores.filter(p=>gremioFilter==='Todos'||p.g===gremioFilter).forEach(p=>{
+    tb.innerHTML+=`<tr>
+      <td><b>${p.n}</b></td>
+      <td><span class="tag-gremio"><span class="d" style="background:${gremios[p.g].c}"></span>${p.g}</span></td>
+      <td style="color:var(--steel-2)">${p.obra}</td>
+      <td class="num">${MXN(p.pagado)}</td>
+      <td class="num ${p.saldo>0?'neg':'pos'}">${p.saldo>0?MXN(p.saldo):'Liquidado'}</td></tr>`;
+  });
+}
+
+/* ============ FINANZAS ============ */
+function renderFinanzas(){
+  obraSel.value=currentObra.id;
+  const c=calcObra(currentObra);
+  document.getElementById('f-ant').textContent=MXN(c.ant);
+  document.getElementById('f-pag').textContent=MXN(c.pag);
+  document.getElementById('f-net').textContent=MXN(c.neto);
+  document.getElementById('f-net-sub').textContent='IVA descontado: '+MXN(c.ivaAmt);
+  document.getElementById('f-obra-name').textContent=currentObra.nombre;
+  const tb=document.querySelector('#tbl-fin tbody');tb.innerHTML='';
+  if(currentObra.mov.length===0){tb.innerHTML='<tr><td colspan="3" style="color:var(--steel);text-align:center;padding:26px">Sin movimientos — obra en cotización.</td></tr>';}
+  currentObra.mov.forEach(m=>{
+    const isAnt=m.tipo==='anticipo';
+    tb.innerHTML+=`<tr><td><b>${m.desc}</b>${m.gremio?`<br><small class="mono" style="color:var(--steel)">${m.gremio}</small>`:''}</td>
+      <td>${isAnt?'<span class="chip-status st-activa">Anticipo</span>':'<span class="chip-status st-cotiz">Pago</span>'}</td>
+      <td class="num ${isAnt?'pos':'neg'}">${isAnt?'+':'−'}${MXN(m.monto)}</td></tr>`;
+  });
+  // bars
+  const base=c.ant/(1+IVA);
+  const maxV=Math.max(c.ant,1);
+  const bars=document.getElementById('finBars');
+  bars.innerHTML=`
+    ${bar('Anticipos cobrados (con IVA)',c.ant,c.ant,maxV,'var(--blueprint)')}
+    ${bar('IVA incluido (16%)',c.ivaAmt,c.ant,maxV,'var(--steel)')}
+    ${bar('Base sin IVA',base,c.ant,maxV,'var(--ochre)')}
+    ${bar('Pagado a proveedores',c.pag,c.ant,maxV,'var(--warn)')}
+    ${bar('Ingreso real (post-IVA)',c.neto,c.ant,maxV,'var(--ok)')}`;
+  // payGremio options
+  const pg=document.getElementById('payGremio');
+  if(pg.options.length===0){Object.keys(gremios).forEach(g=>{const o=document.createElement('option');o.value=g;o.textContent=g;pg.appendChild(o);});}
+}
+function bar(lbl,val,tot,max,color){
+  const pct=Math.max(0,Math.min(100,(val/max)*100));
+  return `<div class="bar-row"><div class="lbl"><span>${lbl}</span><b>${MXN(val)}</b></div><div class="bar"><span style="width:${pct}%;background:${color}"></span></div></div>`;
+}
+document.getElementById('payBtn').addEventListener('click',()=>{
+  const g=document.getElementById('payGremio').value;
+  const m=parseFloat(document.getElementById('payMonto').value);
+  if(!m||m<=0){return;}
+  currentObra.mov.push({desc:'Pago manual · '+g,tipo:'pago',gremio:g,monto:m});
+  document.getElementById('payMonto').value='';
+  renderFinanzas();renderPanel();
+});
+
+/* ============ AI ASSISTANT ============ */
+const aiState={tipo:null,m2:80,acabado:null,conceptos:new Set(),banos:1};
+const tipos=['Departamento','Casa','Local comercial','Oficina'];
+const acabados=['Básico','Medio','Premium'];
+const conceptosList=[
+  {k:'demolicion',n:'Demolición'},{k:'pisos',n:'Pisos'},{k:'plafon',n:'Plafón'},
+  {k:'pintura',n:'Pintura'},{k:'electrica',n:'Eléctrica'},{k:'plomeria',n:'Plomería'},
+  {k:'cocina',n:'Cocina integral'},{k:'closets',n:'Closets'},{k:'bano',n:'Baños'},{k:'canceleria',n:'Cancelería'}
+];
+
+function buildAI(){
+  const b=document.getElementById('aiBody');
+  b.innerHTML=`
+    <div class="bubble">
+      <div class="who">Diego pregunta</div>
+      <div class="msg">Va, cuénteme del proyecto. ¿Qué tipo de espacio vamos a intervenir?</div>
+      <div class="q-field"><div class="opts" id="optTipo"></div></div>
+    </div>
+    <div class="bubble">
+      <div class="who">Diego pregunta</div>
+      <div class="msg">Perfecto. ¿Como cuántos metros cuadrados, más o menos?</div>
+      <div class="q-field"><input type="range" id="rngM2" min="30" max="400" step="5" value="${aiState.m2}"><div class="rangeval"><span id="m2val">${aiState.m2}</span> <small>m²</small></div></div>
+    </div>
+    <div class="bubble">
+      <div class="who">Diego pregunta</div>
+      <div class="msg">¿Qué nivel de acabados busca el cliente? Eso mueve bastante el número.</div>
+      <div class="q-field"><div class="opts" id="optAcab"></div></div>
+    </div>
+    <div class="bubble">
+      <div class="who">Diego pregunta</div>
+      <div class="msg">¿Y qué incluye la obra? Marque todo lo que aplique.</div>
+      <div class="q-field"><div class="opts" id="optConc"></div></div>
+      <div class="q-field" id="banoWrap" style="display:none"><label>¿Cuántos baños?</label>
+        <div class="num-inp"><button id="banoMinus">−</button><span class="val" id="banoVal">1</span><button id="banoPlus">+</button></div>
+      </div>
+    </div>`;
+  // tipo
+  const ot=document.getElementById('optTipo');
+  tipos.forEach(t=>{const o=document.createElement('button');o.className='opt'+(aiState.tipo===t?' sel':'');o.textContent=t;o.onclick=()=>{aiState.tipo=t;buildAI();};ot.appendChild(o);});
+  // m2
+  const rng=document.getElementById('rngM2');
+  rng.addEventListener('input',()=>{aiState.m2=+rng.value;document.getElementById('m2val').textContent=rng.value;});
+  // acabado
+  const oa=document.getElementById('optAcab');
+  acabados.forEach(t=>{const o=document.createElement('button');o.className='opt'+(aiState.acabado===t?' sel':'');o.textContent=t;o.onclick=()=>{aiState.acabado=t;buildAI();};oa.appendChild(o);});
+  // conceptos
+  const oc=document.getElementById('optConc');
+  conceptosList.forEach(c=>{const o=document.createElement('button');o.className='opt'+(aiState.conceptos.has(c.k)?' sel':'');o.textContent=c.n;
+    o.onclick=()=>{aiState.conceptos.has(c.k)?aiState.conceptos.delete(c.k):aiState.conceptos.add(c.k);buildAI();};oc.appendChild(o);});
+  // baños
+  if(aiState.conceptos.has('bano')){
+    document.getElementById('banoWrap').style.display='block';
+    document.getElementById('banoVal').textContent=aiState.banos;
+    document.getElementById('banoMinus').onclick=()=>{aiState.banos=Math.max(1,aiState.banos-1);buildAI();};
+    document.getElementById('banoPlus').onclick=()=>{aiState.banos=Math.min(6,aiState.banos+1);buildAI();};
+  }
+  // hint
+  const ready=aiState.tipo&&aiState.acabado&&aiState.conceptos.size>0;
+  document.getElementById('aiHint').textContent=ready?'Listo para generar ✨':'Contesta tipo, acabado y conceptos';
+  document.getElementById('genBtn').style.opacity=ready?1:.5;
+}
+
+function generar(){
+  if(!aiState.tipo||!aiState.acabado||aiState.conceptos.size===0){
+    document.getElementById('aiHint').textContent='Faltan respuestas ⚠️';return;
+  }
+  const mult=MULT[aiState.acabado];
+  const lines=[];
+  conceptosList.forEach(c=>{
+    if(!aiState.conceptos.has(c.k))return;
+    const pl=plantillas.find(p=>p.key===c.k);
+    let qty, amount, qlabel;
+    if(pl.u==='m²'){qty=aiState.m2;amount=pl.base*mult*qty;qlabel=`${qty} m² × ${MXN(pl.base*mult)}`;}
+    else if(pl.u==='baño'){qty=aiState.banos;amount=pl.base*mult*qty;qlabel=`${qty} baño(s) × ${MXN(pl.base*mult)}`;}
+    else {qty=1;amount=pl.base*mult;qlabel=`1 ${pl.u} × ${MXN(pl.base*mult)}`;}
+    lines.push({desc:pl.p, sub:qlabel, amt:amount});
+  });
+  const directos=lines.reduce((s,l)=>s+l.amt,0);
+  const gasolina=Math.round(aiState.m2*45); // transporte/combustible
+  const admin=directos*0.10;
+  const indirectos=gasolina+admin;
+  const subtotal=directos+indirectos;
+  const utilidad=subtotal*0.20;
+  const preIva=subtotal+utilidad;
+  const iva=preIva*IVA;
+  const total=preIva+iva;
+
+  let html=`<div class="ph">
+    <div class="l"><div class="k">Propuesta AUDA</div><h3>${aiState.tipo} · ${aiState.m2} m²</h3><p>Acabado ${aiState.acabado} · ${lines.length} conceptos</p></div>
+    <div class="stamp">GENERADO<br>POR IA</div>
+  </div><div class="pb">
+  <div class="sec-lbl">Costos directos</div>`;
+  lines.forEach(l=>{html+=`<div class="li"><div class="desc">${l.desc}<small>${l.sub}</small></div><div class="amt">${MXN(l.amt)}</div></div>`;});
+  html+=`<div class="sec-lbl">Costos indirectos</div>
+    <div class="li"><div class="desc">Transporte y combustible<small>gasolina · viáticos</small></div><div class="amt">${MXN(gasolina)}</div></div>
+    <div class="li"><div class="desc">Administración de obra<small>10% de directos</small></div><div class="amt">${MXN(admin)}</div></div>
+    <div class="totals">
+      <div class="totrow"><span>Costos directos</span><span class="m">${MXN(directos)}</span></div>
+      <div class="totrow"><span>Costos indirectos</span><span class="m">${MXN(indirectos)}</span></div>
+      <div class="totrow"><span>Utilidad (20%)</span><span class="m">${MXN(utilidad)}</span></div>
+      <div class="totrow" style="border-top:1px dashed var(--hair-d);margin-top:6px;padding-top:8px"><span>Subtotal</span><span class="m">${MXN(preIva)}</span></div>
+      <div class="totrow"><span>IVA (16%)</span><span class="m">${MXN(iva)}</span></div>
+      <div class="totrow grand"><span>Total al cliente</span><span class="m">${MXN(total)}</span></div>
+      <div class="totrow net" style="margin-top:8px"><span>Ingreso real de Diego (post-IVA)</span><span class="m">${MXN(preIva)}</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn sm" style="flex:1">📄 Exportar PDF</button>
+      <button class="btn sm ghost" style="flex:1">📤 Enviar al cliente</button>
+    </div>
+  </div>`;
+  document.getElementById('propEmpty').classList.add('hidden');
+  const pc=document.getElementById('propContent');
+  pc.classList.remove('hidden');pc.classList.remove('grow');void pc.offsetWidth;pc.classList.add('grow');
+  pc.innerHTML=html;
+  document.getElementById('aiHint').textContent='Propuesta generada ✅ — ajusta y regenera';
+}
+document.getElementById('genBtn').addEventListener('click',generar);
+
+/* ============ INIT ============ */
+renderPanel();renderPlantillas();renderProvFilters();renderProv();renderFinanzas();buildAI();
+</script>
+</body>
+</html>

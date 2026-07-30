@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUDA OS — Presentación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--graphite:#16191D;--concrete:#F4F1EA;--concrete-2:#EAE6DC;--steel:#8A93A0;--steel-2:#5B646F;--ochre:#E6971F;--ochre-soft:#F2B54B;--ochre-deep:#C97F12;--blueprint:#2E6FA7;--blueprint-soft:#6FA6D4;--hair:rgba(255,255,255,.08);--hair-d:rgba(22,25,29,.09)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;color:#fff;background:var(--graphite);-webkit-font-smoothing:antialiased;line-height:1.55;min-height:100vh;display:flex;flex-direction:column}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  a{text-decoration:none;color:inherit}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 28px;width:100%}
+  .topbar{border-bottom:1px solid var(--hair);padding:18px 0}
+  .topbar .wrap{display:flex;align-items:center;gap:12px}
+  .logo{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--ochre),var(--ochre-deep));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;color:#16191D;font-size:17px;box-shadow:0 6px 16px -6px rgba(230,151,31,.6)}
+  .topbar b{font-family:'Space Grotesk';font-weight:600;letter-spacing:.02em;font-size:15px}
+  .topbar .x{color:var(--steel);margin:0 3px}.topbar .at{color:var(--steel);font-size:13px}
+  .hero{flex-grow:1;position:relative;overflow:hidden;display:flex;align-items:center;padding:70px 0}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(800px 380px at 78% 0%,rgba(46,111,167,.18),transparent 60%),radial-gradient(600px 340px at 6% 100%,rgba(230,151,31,.13),transparent 60%);z-index:0}
+  .hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(circle at 72% 34%,#000,transparent 72%);mask-image:radial-gradient(circle at 72% 34%,#000,transparent 72%);opacity:.5;z-index:0}
+  .hero .wrap{position:relative;z-index:1}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ochre-soft);border:1px solid rgba(242,181,75,.35);padding:7px 14px;border-radius:99px;margin-bottom:26px;background:rgba(230,151,31,.06)}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--ochre);box-shadow:0 0 10px var(--ochre)}
+  h1{font-size:clamp(34px,5.5vw,56px);max-width:16ch}
+  h1 .a{color:var(--ochre-soft)}
+  .lede{margin-top:20px;max-width:56ch;font-size:18px;color:#C9D0D8}
+  .cards{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;margin-top:44px}
+  @media(max-width:720px){.cards{grid-template-columns:1fr}}
+  .c{background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:16px;padding:26px;transition:transform .18s,border-color .18s,background .18s;display:flex;flex-direction:column}
+  .c:hover{transform:translateY(-4px);border-color:rgba(230,151,31,.45);background:rgba(255,255,255,.06)}
+  .c.primary{background:linear-gradient(160deg,rgba(230,151,31,.16),rgba(255,255,255,.03));border-color:rgba(230,151,31,.4)}
+  .c .ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;background:rgba(255,255,255,.05);border:1px solid var(--hair)}
+  .c.primary .ic{background:linear-gradient(135deg,var(--ochre),var(--ochre-deep));border:none}
+  .c h3{font-size:20px;margin-bottom:8px}
+  .c p{font-size:14px;color:#AEB6C0;flex-grow:1}
+  .c .go{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px;color:var(--ochre-soft)}
+  .c.primary .go{color:var(--ochre-soft)}
+  .tag{display:inline-block;font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.08);color:var(--steel);margin-bottom:14px;width:fit-content}
+  footer{border-top:1px solid var(--hair);padding:20px 0}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  footer .mono{font-size:11.5px;color:var(--steel)}
+  footer b{color:var(--ochre-soft);font-weight:500}
+</style>
+</head>
+<body>
+  <div class="topbar"><div class="wrap"><div class="logo">A</div><b>AUDA&nbsp;OS</b><span class="x">×</span><span class="at mono">Atelio</span></div></div>
+
+  <section class="hero"><div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>Presentación · Construcción</span>
+    <h1>El sistema operativo de <span class="a">obra</span> para AUDA.</h1>
+    <p class="lede">De hojas de cálculo y PDFs sueltos a una sola plataforma: presupuestos con IA, control financiero por obra y proveedores por gremio — en un solo lugar.</p>
+    <div class="cards">
+      <a class="c primary" href="demo.html">
+        <span class="tag">Demo interactivo · Fase 1</span>
+        <div class="ic">🤖</div>
+        <h3>Probar el sistema en vivo</h3>
+        <p>Arma un presupuesto con el asistente de IA, registra un pago y mira el ingreso real recalcularse. 5 pantallas funcionando.</p>
+        <span class="go">Abrir demo →</span>
+      </a>
+      <a class="c" href="desglose.html">
+        <span class="tag">Documento</span>
+        <div class="ic">🗂️</div>
+        <h3>Desglose de necesidades</h3>
+        <p>Cómo cada necesidad de Diego se convierte en un módulo, con módulos estrella y hoja de ruta por fases.</p>
+        <span class="go">Ver desglose →</span>
+      </a>
+    </div>
+  </div></section>
+
+  <footer><div class="wrap">
+    <span class="mono">AUDA OS · Presentación</span>
+    <span class="mono">Construido sobre <b>Atelio</b> · <b>Forma</b> · 2026</span>
+  </div></footer>
+</body>
+</html>
