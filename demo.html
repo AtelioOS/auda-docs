@@ -214,6 +214,39 @@
   .plantilla-tip b{color:var(--blueprint)}
   .editable{border:1px dashed transparent;border-radius:6px;padding:2px 6px;transition:border-color .15s}
   .editable:hover{border-color:var(--ochre)}
+  .brand{text-decoration:none;color:inherit}
+  /* enriched modules */
+  .disp{display:flex;flex-direction:column;gap:12px}
+  .disp-card{background:var(--card);border:1px solid var(--hair-d);border-radius:14px;padding:18px 20px}
+  .disp-card .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+  .disp-card h4{font-size:16px;display:flex;align-items:center}
+  .crew{display:flex;flex-wrap:wrap;gap:8px}
+  .crew .m{display:flex;align-items:center;gap:8px;background:var(--concrete);border:1px solid var(--hair-d);border-radius:9px;padding:8px 12px;font-size:13px;font-weight:500}
+  .crew .m .st{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .checkin{font-family:'IBM Plex Mono';font-size:11px;color:var(--steel-2)}
+  .kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .kcol{background:var(--card);border:1px solid var(--hair-d);border-radius:14px;padding:14px;min-height:170px}
+  .kcol .kh{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--steel-2);display:flex;justify-content:space-between;margin-bottom:12px}
+  .kcol .kh b{color:var(--graphite)}
+  .kcard{background:var(--concrete);border:1px solid var(--hair-d);border-radius:10px;padding:12px;margin-bottom:10px;transition:transform .12s,box-shadow .12s}
+  .kcard:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .kcard h4{font-size:13.5px;margin-bottom:3px}
+  .kcard .meta{font-size:11.5px;color:var(--steel-2);font-family:'IBM Plex Mono'}
+  .kcard .val{font-family:'IBM Plex Mono';font-weight:600;font-size:12.5px;color:var(--ochre-deep);margin-top:6px}
+  @media(max-width:900px){
+    .side{flex-direction:column}
+    .side .nav{display:flex;flex-direction:row;overflow-x:auto;gap:6px;padding:10px 12px;-ms-overflow-style:none;scrollbar-width:none}
+    .side .nav::-webkit-scrollbar{display:none}
+    .side .nav .grp{display:none}
+    .side .nav a{white-space:nowrap;margin-bottom:0;flex-shrink:0;padding:9px 12px}
+    .side .nav a.active::before{display:none}
+    .side .mini-obra,.side .foot{display:none}
+    .brand{padding:14px 16px 6px}
+    .banner{padding:22px}.banner h1{font-size:22px}
+    .ai-wrap{gap:14px}.prop{position:static}
+    .kanban{grid-template-columns:1fr}
+    .kpi .v{font-size:24px}
+  }
 </style>
 </head>
 <body>
@@ -232,7 +265,7 @@
 <div class="app">
   <!-- SIDEBAR -->
   <aside class="side">
-    <div class="brand"><div class="logo">A</div><div class="nm"><b>AUDA&nbsp;OS</b><span>Sistema de obra</span></div></div>
+    <a class="brand" href="index.html"><div class="logo">A</div><div class="nm"><b>AUDA&nbsp;OS</b><span>‹ Volver a la presentación</span></div></a>
     <nav class="nav">
       <div class="grp">Fase 1 · Núcleo</div>
       <a data-view="panel" class="active"><span class="ic">🎛️</span>Panel de obra</a>
@@ -240,6 +273,9 @@
       <a data-view="plantillas"><span class="ic">🧱</span>Plantillas de costos</a>
       <a data-view="finanzas"><span class="ic">💰</span>Finanzas por obra</a>
       <a data-view="proveedores"><span class="ic">👷</span>Proveedores</a>
+      <div class="grp">Ampliado · de otros sistemas Atelio</div>
+      <a data-view="cuadrillas"><span class="ic">🦺</span>Cuadrillas &amp; Dispatch</a>
+      <a data-view="pipeline"><span class="ic">📊</span>Pipeline de obra</a>
       <div class="grp">Próximamente · Fase 2–3</div>
       <a class="soon"><span class="ic">📸</span>Bitácora de obra<span class="tag">F2</span></a>
       <a class="soon"><span class="ic">🗂️</span>Expediente<span class="tag">F2</span></a>
@@ -351,6 +387,59 @@
       <div class="card"><table id="tbl-prov"><thead><tr><th>Proveedor</th><th>Gremio</th><th>Obra asignada</th><th class="num">Pagado</th><th class="num">Saldo</th></tr></thead><tbody></tbody></table></div>
     </div>
 
+    <!-- CUADRILLAS & DISPATCH -->
+    <div class="view hidden" id="view-cuadrillas">
+      <div class="banner"><div class="in"><div class="eyebrow">Ampliado · de Service &amp; Dispatch (QCS · Umbria)</div><h1>Cuadrillas &amp; Dispatch</h1><p>La agenda del día por obra: qué gremio va, a qué hora, y su check-in en sitio con foto y checklist — <span class="lede-b">pensado para el campo</span>.</p></div></div>
+      <div class="disp">
+        <div class="disp-card">
+          <div class="top"><h4>🏗️ Depto. Polanco <span class="chip-status st-activa" style="margin-left:8px">Hoy</span></h4><span class="checkin">3 gremios · 2 en sitio</span></div>
+          <div class="crew">
+            <div class="m"><span class="st" style="background:var(--ok)"></span>Kadiel · Albañilería <span class="checkin">✓ 8:10</span></div>
+            <div class="m"><span class="st" style="background:var(--ok)"></span>Marco · Electricidad <span class="checkin">✓ 8:35</span></div>
+            <div class="m"><span class="st" style="background:var(--warn)"></span>Rodrigo · Pintura <span class="checkin">pendiente</span></div>
+          </div>
+        </div>
+        <div class="disp-card">
+          <div class="top"><h4>🏗️ Casa Coyoacán <span class="chip-status st-activa" style="margin-left:8px">Hoy</span></h4><span class="checkin">2 gremios · 1 en sitio</span></div>
+          <div class="crew">
+            <div class="m"><span class="st" style="background:var(--ok)"></span>Martín · Carpintería <span class="checkin">✓ 9:00</span></div>
+            <div class="m"><span class="st" style="background:var(--steel)"></span>Juan Luis · Plomería <span class="checkin">programado 14:00</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px"><h3>✅ Checklist en sitio · Depto. Polanco</h3><div class="card-sub">Lo que la cuadrilla marca desde el celular, con foto.</div>
+        <table><tbody>
+          <tr><td>Preparación de muros — recámara principal</td><td class="num"><span class="chip-status st-activa">Hecho 📷</span></td></tr>
+          <tr><td>Registro eléctrico — sala</td><td class="num"><span class="chip-status st-activa">Hecho 📷</span></td></tr>
+          <tr><td>Aplanado — cocina</td><td class="num"><span class="chip-status st-cotiz">En proceso</span></td></tr>
+          <tr><td>Primera mano de pintura — recámaras</td><td class="num" style="color:var(--steel)">Programado</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- PIPELINE DE OBRA -->
+    <div class="view hidden" id="view-pipeline">
+      <div class="banner"><div class="in"><div class="eyebrow">Ampliado · de CRM / commercial spine (QCS · Umbria · Bugambilia)</div><h1>Pipeline de obra</h1><p>Del prospecto a la obra cerrada. Cada tarjeta conecta con el asistente de presupuestos — <span class="lede-b">tu embudo comercial en una vista</span>.</p></div></div>
+      <div class="kanban">
+        <div class="kcol"><div class="kh"><b>Prospecto</b><span>2</span></div>
+          <div class="kcard"><h4>Oficina Reforma</h4><div class="meta">Referido · IG</div></div>
+          <div class="kcard"><h4>Casa Del Valle</h4><div class="meta">Google Ads</div></div>
+        </div>
+        <div class="kcol"><div class="kh"><b>Cotización</b><span>1</span></div>
+          <div class="kcard"><h4>Local Roma Norte</h4><div class="meta">75 m² · Medio</div><div class="val">$312,000 MXN</div></div>
+        </div>
+        <div class="kcol"><div class="kh"><b>Contrato</b><span>1</span></div>
+          <div class="kcard"><h4>Casa Coyoacán</h4><div class="meta">210 m²</div><div class="val">Anticipo ✓</div></div>
+        </div>
+        <div class="kcol"><div class="kh"><b>En obra</b><span>1</span></div>
+          <div class="kcard"><h4>Depto. Polanco</h4><div class="meta">92 m² · 62%</div><div class="val">$300,000 anticipos</div></div>
+        </div>
+        <div class="kcol"><div class="kh"><b>Cerrada</b><span>1</span></div>
+          <div class="kcard"><h4>Depto. Nápoles</h4><div class="meta">Entregada</div><div class="val" style="color:var(--ok)">Liquidada</div></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -398,7 +487,7 @@ let currentObra = obras[0];
 document.getElementById('enterBtn').addEventListener('click',()=>document.getElementById('splash').classList.add('hide'));
 try{ const d=new Date(); document.getElementById('todayLbl').textContent = d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}); }catch(e){}
 
-const crumbNames={panel:'Panel de obra',presupuestos:'Presupuestos con IA',plantillas:'Plantillas de costos',finanzas:'Finanzas por obra',proveedores:'Proveedores'};
+const crumbNames={panel:'Panel de obra',presupuestos:'Presupuestos con IA',plantillas:'Plantillas de costos',finanzas:'Finanzas por obra',proveedores:'Proveedores',cuadrillas:'Cuadrillas & Dispatch',pipeline:'Pipeline de obra'};
 document.querySelectorAll('.nav a[data-view]').forEach(a=>{
   a.addEventListener('click',()=>{
     document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active'));
