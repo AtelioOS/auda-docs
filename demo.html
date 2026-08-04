@@ -246,7 +246,43 @@
     .ai-wrap{gap:14px}.prop{position:static}
     .kanban{grid-template-columns:1fr}
     .kpi .v{font-size:24px}
+    .obras-grid{grid-template-columns:1fr}
+    .two-col{grid-template-columns:1fr!important}
   }
+  /* obras grid */
+  .obras-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .obra-card{background:var(--card);border:1px solid var(--hair-d);border-radius:var(--r);padding:20px;transition:transform .16s,box-shadow .16s,border-color .16s}
+  .obra-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:rgba(230,151,31,.4)}
+  .oc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+  .oc-top h3{font-size:17px}
+  .oc-bar{height:8px;border-radius:5px;background:var(--concrete-2);overflow:hidden}
+  .oc-bar span{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--ochre),var(--ochre-soft))}
+  .oc-pct{font-size:11px;color:var(--steel);margin-top:6px}
+  .oc-nums{display:flex;gap:24px;margin-top:14px}
+  .oc-nums .k{font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--steel-2)}
+  .oc-nums .v{font-family:'Space Grotesk';font-weight:700;font-size:17px;margin-top:3px}
+  /* P&L modelo financiero */
+  .pl-sec{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--blueprint);font-weight:600;padding:16px 0 6px;display:flex;align-items:center;gap:8px}
+  .edit-hint{font-family:'IBM Plex Mono';font-size:9px;background:rgba(230,151,31,.14);color:var(--ochre-deep);padding:2px 7px;border-radius:5px;letter-spacing:.04em}
+  .pl-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13.5px;color:var(--steel-3);border-bottom:1px solid var(--hair-d)}
+  .pl-row .m{font-family:'IBM Plex Mono';font-weight:500}
+  .pl-row.tot{font-weight:600;color:var(--graphite)}
+  .pl-row.tot .m{color:var(--graphite)}
+  .pl-row.grand{background:var(--concrete);margin:10px -24px -24px;padding:16px 24px;border-radius:0 0 var(--r) var(--r);font-family:'Space Grotesk';font-weight:700;font-size:18px;color:var(--graphite);border-bottom:none}
+  .pl-row.grand .m{font-family:'IBM Plex Mono';font-size:18px}
+  .pl-row small{font-weight:500;font-size:11px}
+  .opex-inp{width:104px;text-align:right;border:1px solid var(--hair-d);border-radius:7px;padding:5px 8px;font-family:'IBM Plex Mono';font-size:13px;background:var(--card)}
+  .opex-inp:focus{outline:none;border-color:var(--ochre)}
+  .pl-row .m .pk{color:var(--steel);margin-right:3px}
+  .fm-note{font-size:13px;color:var(--steel-3);padding:11px 0;border-bottom:1px solid var(--hair-d);line-height:1.5}
+  .fm-note:last-child{border-bottom:none}
+  .fm-note b{color:var(--graphite);font-family:'Space Grotesk';font-weight:600}
+  /* add supplier */
+  .add-sup-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .add-sup-row input,.add-sup-row select{border:1px solid var(--hair-d);border-radius:9px;padding:10px 12px;font-size:13.5px;background:var(--card)}
+  .add-sup-row input{flex:1;min-width:160px}
+  .obra-sel-row{border:1px solid var(--hair-d);border-radius:8px;padding:6px 10px;font-size:13px;background:var(--concrete);color:var(--graphite);cursor:pointer}
+  .obra-sel-row:focus{outline:none;border-color:var(--ochre)}
 </style>
 </head>
 <body>
@@ -269,9 +305,11 @@
     <nav class="nav">
       <div class="grp">Fase 1 · Núcleo</div>
       <a data-view="panel" class="active"><span class="ic">🎛️</span>Panel de obra</a>
+      <a data-view="obras"><span class="ic">🏗️</span>Obras</a>
       <a data-view="presupuestos"><span class="ic">🤖</span>Presupuestos con IA</a>
       <a data-view="plantillas"><span class="ic">🧱</span>Plantillas de costos</a>
       <a data-view="finanzas"><span class="ic">💰</span>Finanzas por obra</a>
+      <a data-view="finmodel"><span class="ic">📈</span>Modelo financiero</a>
       <a data-view="proveedores"><span class="ic">👷</span>Proveedores</a>
       <div class="grp">Ampliado · de otros sistemas Atelio</div>
       <a data-view="cuadrillas"><span class="ic">🦺</span>Cuadrillas &amp; Dispatch</a>
@@ -380,9 +418,57 @@
       </div>
     </div>
 
+    <!-- OBRAS (projects) -->
+    <div class="view hidden" id="view-obras">
+      <div class="banner"><div class="in"><div class="eyebrow">Tus proyectos</div><h1>Obras</h1><p>Todas tus obras de un vistazo. Entra a cualquiera para ver sus finanzas, o cámbiala desde el selector de arriba en cualquier pantalla.</p></div></div>
+      <div class="obras-grid" id="obrasGrid"></div>
+    </div>
+
+    <!-- MODELO FINANCIERO -->
+    <div class="view hidden" id="view-finmodel">
+      <div class="banner"><div class="in"><div class="eyebrow">Salud del negocio</div><h1>Modelo financiero</h1><p>El estado de resultados de toda la empresa: ingresos de tus obras, costos directos, <span class="lede-b">gastos de operación (OPEX)</span> y utilidad operativa. Edita el OPEX y mira el EBITDA moverse.</p></div></div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="top"><div class="ic">📥</div></div><div class="k">Ingresos (sin IVA)</div><div class="v" id="fm-rev">$0</div></div>
+        <div class="kpi"><div class="top"><div class="ic">📊</div></div><div class="k">Utilidad bruta</div><div class="v" id="fm-gross">$0</div></div>
+        <div class="kpi"><div class="top"><div class="ic">🏢</div></div><div class="k">OPEX total</div><div class="v" id="fm-opex">$0</div></div>
+        <div class="kpi accent"><div class="top"><div class="ic">💎</div><span class="trend up" id="fm-em">0%</span></div><div class="k">Utilidad operativa (EBITDA)</div><div class="v" id="fm-ebitda" style="color:var(--ok-soft)">$0</div><div class="sub">Después de OPEX</div></div>
+      </div>
+      <div class="two-col" style="grid-template-columns:1.5fr 1fr">
+        <div class="card pl">
+          <h3>📄 Estado de resultados</h3><div class="card-sub">Del periodo · obras activas. Los montos de ingresos y costos vienen de tus obras.</div>
+          <div class="pl-sec">Ingresos (base sin IVA)</div>
+          <div id="fm-revrows"></div>
+          <div class="pl-row tot"><span>Total ingresos</span><span class="m" id="fm-revtot">$0</span></div>
+          <div class="pl-sec">Costos directos de obra</div>
+          <div class="pl-row"><span>Pagos a proveedores y mano de obra</span><span class="m neg" id="fm-cogs">$0</span></div>
+          <div class="pl-row tot"><span>Utilidad bruta <small class="mono" id="fm-gm" style="color:var(--ok)"></small></span><span class="m pos" id="fm-gross2">$0</span></div>
+          <div class="pl-sec">Gastos de operación · OPEX <span class="edit-hint">editable</span></div>
+          <div id="fm-opexrows"></div>
+          <div class="pl-row tot"><span>Total OPEX</span><span class="m neg" id="fm-opextot">$0</span></div>
+          <div class="pl-row grand"><span>Utilidad operativa · EBITDA <small class="mono" id="fm-em2"></small></span><span class="m" id="fm-ebitda2">$0</span></div>
+        </div>
+        <div class="card">
+          <h3>💡 Cómo leerlo</h3><div class="card-sub">Un modelo vivo, no una foto.</div>
+          <div class="fm-note"><b>Ingresos</b> = lo cobrado a clientes, ya sin IVA (el IVA no es tuyo, se entrega al SAT).</div>
+          <div class="fm-note"><b>Utilidad bruta</b> = ingresos − lo que pagas a proveedores y mano de obra en la obra.</div>
+          <div class="fm-note"><b>OPEX</b> = lo que cuesta mantener el negocio, exista o no obra: oficina, sueldos administrativos, vehículos, software, seguros, contador, marketing.</div>
+          <div class="fm-note"><b>EBITDA</b> = utilidad bruta − OPEX. Es lo que de verdad gana la empresa operando.</div>
+          <div class="fm-note" style="border:none;color:var(--steel)">Ajusta cualquier renglón de OPEX y el EBITDA y el margen se recalculan al instante.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- PROVEEDORES -->
     <div class="view hidden" id="view-proveedores">
-      <div class="banner"><div class="in"><div class="eyebrow">Directorio</div><h1>Proveedores</h1><p>El directorio de Diego por gremio, con lo pagado y el saldo pendiente de cada quien.</p></div></div>
+      <div class="banner"><div class="in"><div class="eyebrow">Directorio</div><h1>Proveedores</h1><p>Da de alta proveedores por oficio y <span class="lede-b">asígnalos a las obras</span> donde trabajan. Cada uno con lo pagado y su saldo.</p></div></div>
+      <div class="card add-sup"><h3>➕ Nuevo proveedor</h3><div class="card-sub">Registra una empresa o persona por gremio y asígnala a una obra.</div>
+        <div class="add-sup-row">
+          <input id="supName" placeholder="Nombre o empresa">
+          <select id="supGremio"></select>
+          <select id="supObra"></select>
+          <button class="btn sm dark" id="supAdd">+ Agregar proveedor</button>
+        </div>
+      </div>
       <div class="filters" id="gremioFilters"></div>
       <div class="card"><table id="tbl-prov"><thead><tr><th>Proveedor</th><th>Gremio</th><th>Obra asignada</th><th class="num">Pagado</th><th class="num">Saldo</th></tr></thead><tbody></tbody></table></div>
     </div>
@@ -487,7 +573,7 @@ let currentObra = obras[0];
 document.getElementById('enterBtn').addEventListener('click',()=>document.getElementById('splash').classList.add('hide'));
 try{ const d=new Date(); document.getElementById('todayLbl').textContent = d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}); }catch(e){}
 
-const crumbNames={panel:'Panel de obra',presupuestos:'Presupuestos con IA',plantillas:'Plantillas de costos',finanzas:'Finanzas por obra',proveedores:'Proveedores',cuadrillas:'Cuadrillas & Dispatch',pipeline:'Pipeline de obra'};
+const crumbNames={panel:'Panel de obra',obras:'Obras',presupuestos:'Presupuestos con IA',plantillas:'Plantillas de costos',finanzas:'Finanzas por obra',finmodel:'Modelo financiero',proveedores:'Proveedores',cuadrillas:'Cuadrillas & Dispatch',pipeline:'Pipeline de obra'};
 document.querySelectorAll('.nav a[data-view]').forEach(a=>{
   a.addEventListener('click',()=>{
     document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active'));
@@ -551,14 +637,71 @@ function renderProvFilters(){
   const wrap=document.getElementById('gremioFilters');wrap.innerHTML='';
   ['Todos',...Object.keys(gremios)].forEach(g=>{const b=document.createElement('button');b.className='f'+(g===gremioFilter?' active':'');b.textContent=g;b.onclick=()=>{gremioFilter=g;renderProvFilters();renderProv();};wrap.appendChild(b);});
 }
+function obraOptions(sel){let h='<option value="">Sin asignar</option>';obras.forEach(o=>{h+=`<option ${o.nombre===sel?'selected':''}>${o.nombre}</option>`;});return h;}
 function renderProv(){
   const tb=document.querySelector('#tbl-prov tbody');tb.innerHTML='';
-  proveedores.filter(p=>gremioFilter==='Todos'||p.g===gremioFilter).forEach(p=>{tb.innerHTML+=`<tr>
+  proveedores.filter(p=>gremioFilter==='Todos'||p.g===gremioFilter).forEach(p=>{const i=proveedores.indexOf(p);const gc=gremios[p.g]?gremios[p.g].c:'#8A93A0';tb.innerHTML+=`<tr>
     <td><b>${p.n}</b></td>
-    <td><span class="tag-gremio"><span class="d" style="background:${gremios[p.g].c}"></span>${p.g}</span></td>
-    <td style="color:var(--steel-2)">${p.obra}</td>
+    <td><span class="tag-gremio"><span class="d" style="background:${gc}"></span>${p.g}</span></td>
+    <td><select class="obra-sel-row" data-i="${i}">${obraOptions(p.obra)}</select></td>
     <td class="num">${MXN(p.pagado)}</td>
     <td class="num ${p.saldo>0?'neg':'pos'}">${p.saldo>0?MXN(p.saldo):'Liquidado'}</td></tr>`;});
+  tb.querySelectorAll('.obra-sel-row').forEach(s=>s.addEventListener('change',()=>{proveedores[+s.dataset.i].obra=s.value||'Sin asignar';}));
+}
+function initSupForm(){
+  const g=document.getElementById('supGremio');if(g&&g.options.length===0){Object.keys(gremios).forEach(x=>g.insertAdjacentHTML('beforeend',`<option>${x}</option>`));}
+  const o=document.getElementById('supObra');if(o&&o.options.length===0){o.innerHTML=obraOptions('');}
+  const btn=document.getElementById('supAdd');if(btn)btn.onclick=()=>{
+    const n=document.getElementById('supName').value.trim();if(!n)return;
+    const gr=document.getElementById('supGremio').value;const ob=document.getElementById('supObra').value||'Sin asignar';
+    proveedores.push({n,g:gr,obra:ob,pagado:0,saldo:0});
+    document.getElementById('supName').value='';gremioFilter='Todos';renderProvFilters();renderProv();
+  };
+}
+/* ===== OBRAS (project navigation) ===== */
+const avanceMap={polanco:62,coyoacan:40,roma:0};
+function renderObras(){
+  const g=document.getElementById('obrasGrid');if(!g)return;g.innerHTML='';
+  obras.forEach(o=>{const c=calcObra(o);const stMap={activa:['st-activa','Activa'],cotizacion:['st-cotiz','Cotización']};const st=stMap[o.estado];const av=avanceMap[o.id]||0;const cot=o.estado==='cotizacion';
+    g.innerHTML+=`<div class="obra-card">
+      <div class="oc-top"><div><h3>${o.nombre}</h3><span class="mono" style="color:var(--steel);font-size:12px">${o.m2} m²</span></div><span class="chip-status ${st[0]}">${st[1]}</span></div>
+      <div class="oc-bar"><span style="width:${av}%"></span></div><div class="oc-pct mono">${av}% de avance</div>
+      <div class="oc-nums"><div><div class="k">Anticipos</div><div class="v">${cot?'—':MXN(c.ant)}</div></div><div><div class="k">Ingreso real</div><div class="v pos">${cot?'—':MXN(c.neto)}</div></div></div>
+      <button class="btn sm" style="width:100%;justify-content:center;margin-top:14px" onclick="openObra('${o.id}')">Ver finanzas →</button>
+    </div>`;});
+}
+function openObra(id){currentObra=obras.find(o=>o.id===id);renderFinanzas();const link=document.querySelector('.nav a[data-view="finanzas"]');if(link)link.click();}
+/* ===== MODELO FINANCIERO (with OPEX) ===== */
+let opex=[
+  {n:'Renta de oficina y bodega',v:18000},
+  {n:'Sueldos administrativos',v:45000},
+  {n:'Vehículos y combustible (admin)',v:12000},
+  {n:'Software y sistemas (AUDA OS)',v:20880},
+  {n:'Seguros',v:6000},
+  {n:'Contador y legal',v:8000},
+  {n:'Marketing y publicidad',v:10000},
+  {n:'Otros gastos',v:5000},
+];
+function renderFinModelTotals(){
+  let revenue=0,cogs=0;
+  obras.forEach(o=>{if(o.estado!=='activa')return;const c=calcObra(o);revenue+=c.ant/(1+IVA);cogs+=c.pag;});
+  const gross=revenue-cogs;const opexTotal=opex.reduce((s,l)=>s+l.v,0);const ebitda=gross-opexTotal;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('fm-rev',MXN(revenue));set('fm-revtot',MXN(revenue));
+  set('fm-cogs','−'+MXN(cogs));
+  set('fm-gross',MXN(gross));set('fm-gross2',MXN(gross));
+  set('fm-opex',MXN(opexTotal));set('fm-opextot',MXN(opexTotal));
+  set('fm-ebitda',MXN(ebitda));set('fm-ebitda2',MXN(ebitda));
+  const gm=revenue?gross/revenue*100:0, em=revenue?ebitda/revenue*100:0;
+  set('fm-gm','· margen '+gm.toFixed(1)+'%');set('fm-em','margen '+em.toFixed(1)+'%');set('fm-em2','· margen '+em.toFixed(1)+'%');
+}
+function renderFinModel(){
+  const rb=document.getElementById('fm-revrows');if(!rb)return;rb.innerHTML='';
+  obras.filter(o=>o.estado==='activa').forEach(o=>{const c=calcObra(o);rb.innerHTML+=`<div class="pl-row"><span>${o.nombre}</span><span class="m">${MXN(c.ant/(1+IVA))}</span></div>`;});
+  const ob=document.getElementById('fm-opexrows');ob.innerHTML='';
+  opex.forEach((l,i)=>{ob.innerHTML+=`<div class="pl-row"><span>${l.n}</span><span class="m"><span class="pk">$</span><input class="opex-inp" type="number" value="${l.v}" data-i="${i}"></span></div>`;});
+  ob.querySelectorAll('.opex-inp').forEach(inp=>inp.addEventListener('input',()=>{opex[+inp.dataset.i].v=parseFloat(inp.value)||0;renderFinModelTotals();}));
+  renderFinModelTotals();
 }
 
 function renderFinanzas(){
@@ -645,7 +788,7 @@ function generar(){
 }
 document.getElementById('genBtn').addEventListener('click',generar);
 
-renderPanel();renderPlantillas();renderProvFilters();renderProv();renderFinanzas();buildAI();
+renderPanel();renderPlantillas();renderProvFilters();renderProv();renderFinanzas();buildAI();renderObras();renderFinModel();initSupForm();
 </script>
 </body>
 </html>
